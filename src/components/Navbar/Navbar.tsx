@@ -13,7 +13,7 @@ import {
   Icon,
 } from "./styles";
 
-import { FaHeadphones, FaChartPie, FaPlug, FaBook, FaUserAlt, FaSitemap, FaShoppingBag, FaShoppingCart, FaHistory } from "react-icons/fa";
+import { FaHeadphones, FaChartPie, FaPlug, FaBook, FaUserAlt, FaSitemap, FaShoppingBag, FaShoppingCart, FaHistory, FaCreditCard, FaMoneyBill } from "react-icons/fa";
 import { GrHistory } from "react-icons/gr";
 import { IoSettingsSharp } from "react-icons/io5";
 import { ImArrowLeft2 } from "react-icons/im";
@@ -49,6 +49,21 @@ const Navbar = () => {
           <NavbarMenuItem to="/cartRequests" isOpen={isExpanded}>
             <FaHistory className="icon" size={18} />
             <span>Historico de Compras</span>
+          </NavbarMenuItem>
+
+          <NavbarMenuItem to="/payment_card" isOpen={isExpanded}>
+            <FaCreditCard className="icon" size={18} />
+            <span>Cartões</span>
+          </NavbarMenuItem>
+
+          <NavbarMenuItem to="/address" isOpen={isExpanded}>
+            <FaCreditCard className="icon" size={18} />
+            <span>Endereços</span>
+          </NavbarMenuItem>
+
+          <NavbarMenuItem to="/coupon" isOpen={isExpanded}>
+            <FaMoneyBill className="icon" size={18} />
+            <span>Cupons</span>
           </NavbarMenuItem>
 
 
