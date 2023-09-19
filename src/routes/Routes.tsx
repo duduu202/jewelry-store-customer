@@ -7,11 +7,12 @@ import { useAuth } from '../hooks/useAuth';
 import HomePage from '../pages/Home/Home';
 import PrivateRoute from './RoutesPrivate';
 import LoginPage from '../pages/Login/Login';
-import UserListPage from '../pages/Master/User/UserList';
-import UserEditPage from '../pages/Master/User/UserEditor';
-import UserCreatePage from '../pages/Master/User/UserCreate';
-import ProductsListPage from '../pages/Master/Products/ProductsList';
-import CartsListPage from '../pages/Master/Carts/CartsList';
+import UserListPage from '../pages/Customer/User/UserList';
+import UserEditPage from '../pages/Customer/User/UserEditor';
+import UserCreatePage from '../pages/Customer/User/UserCreate';
+import ProductsListPage from '../pages/Customer/Products/ProductsList';
+import CartsListPage from '../pages/Customer/CartRequests/CartsList';
+import CartPage from '../pages/Customer/Cart/Cart';
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -21,14 +22,14 @@ const AppRoutes = () => {
       <Routes>
         <Route
           path="/"
-          element={isAuthenticated ? <Navigate to="/dashboard" /> : <Navigate to="/login" />}
+          element={isAuthenticated ? <Navigate to="/product" /> : <Navigate to="/login" />}
         />
 
         <Route element={<PrivateRoute />}>
-          <Route path="/dashboard" element={<HomePage />} />
           <Route path="/user" element={<UserListPage />} />
           <Route path="/product" element={<ProductsListPage />} />
-          <Route path="/cart" element={<CartsListPage />} />
+          <Route path="/cartRequests" element={<CartsListPage />} />
+          <Route path="/cart" element={<CartPage />} />
           {/* <Route path="/users/edit/:id" element={<UserEditPage />} /> */}
           {/* <Route path="/users/create" element={<UserCreatePage />} /> */}
         </Route>

@@ -15,8 +15,8 @@ const fadeIn = keyframes`
 `;
 
 export const NavbarContainer = styled.div<NavbarProps>`
-  width: ${({ isOpen }) => isOpen ? '17.8rem' : '4.5rem'};
-  height: 100vh;
+  width: 100%;
+  height: 6rem;
   background-color: ${(props) => props.theme.colors.background};
 
   display: flex;
@@ -52,10 +52,9 @@ export const Icon = styled.button<NavbarProps>`
 
 export const NavbarHeader = styled.div`
   width: 100%;
-  padding: 35px 0;
+  padding: 1% 0 0 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
+
 `;
 
 export const NavbarLogo = styled.img<NavbarProps>`
@@ -66,6 +65,7 @@ export const NavbarLogo = styled.img<NavbarProps>`
 
 export const NavbarMenu = styled.div`
   width: 100%;
+  display: flex;
 `;
 
 export const NavbarMenuItem = styled(NavLink)<NavbarProps>`
@@ -119,6 +119,7 @@ export const ProfileContainer = styled.div<NavbarProps>`
   flex-direction: column;
   margin-left: 0.8rem;
   animation: ${fadeIn} 2s;
+  padding: 0.8rem;
 `;
 
 export const ProfileImage = styled.img<NavbarProps>`

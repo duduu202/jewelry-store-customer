@@ -12,6 +12,7 @@ import { ButtonComponent } from "../Button/styles";
 import { Modal } from "../Modal/Modal";
 import { ModalContent } from "../Modal/styles";
 import Editor from "./Editor";
+import isIsoDate from "../../utils/checkIsoDate";
 
 
 interface IProps {
@@ -30,6 +31,18 @@ interface IProps {
     objectKeys: {
       [key: string]: string;
     }
+
+    actions?:
+    [
+        {
+            name: string;
+            onClick: (obj: any) => void;
+        }
+    ]
+
+    disableActions?: boolean;
+    disableCreate?: boolean;
+    
 }
 
 const ListEditor = (props: IProps) => {
@@ -113,7 +126,7 @@ const ListEditor = (props: IProps) => {
             ) : (
                 <div>
                     {/* <GenericList column_names={['Nome', "Estoque", "Imagem", "Preço" ,"Ações"]} data={data?.map((item) =>{ */}
-                    <GenericList column_names={Object.values(props.objectKeys).concat("Ações")} data={data?.map((item) =>{
+                    <GenericList column_names={Object.values(props.objectKeys).concat(props.disableActions? [] : "Ações")} data={data?.map((item) =>{
                         return {
                             id: item.id,
                             //items: [item.name, item.stock, item.image ? <img src={item.image} alt="imagem" width="100px" height="100px"/> : <></>, item.price ? item.price : <></>,
@@ -121,15 +134,25 @@ const ListEditor = (props: IProps) => {
                                 if(key === 'image'){
                                     return item.image ? <img src={item.image} alt="imagem" width="100px" height="100px"/> : <></>
                                 }
+                                if(isIsoDate(item[key])){
+                                    const date = new Date(item[key]);
+                                    return date.toLocaleDateString('pt-BR');
+                                }
                                 else{
                                     return item[key];
                                 }
                             }
                             ).concat(
-                                <div>
-                                    <ButtonComponent onClick={() => handleDelete(item.id)}>Excluir</ButtonComponent>
-                                    <ButtonComponent onClick={() => handleEdit(item.id)}>Editar</ButtonComponent>
-                                </div>
+                                props.disableActions? [] :
+                                [
+                                    props.actions? props.actions.map(action => {
+                                        return <ButtonComponent onClick={() => action.onClick(item)}>{action.name}</ButtonComponent>
+                                    }) :<div>
+                                            <ButtonComponent onClick={() => handleDelete(item.id)}>Excluir</ButtonComponent>
+                                            <ButtonComponent onClick={() => handleEdit(item.id)}>Editar</ButtonComponent>
+                                        </div>
+                                    
+                                ]
                             )
                         
                         }
@@ -140,13 +163,17 @@ const ListEditor = (props: IProps) => {
                         </ModalContent>
                     </Modal>
 
-                    <ButtonComponent onClick={() => handleCreate()}>Criar</ButtonComponent>
+                    {
+                        props.disableCreate? <></> :
+                        <ButtonComponent onClick={() => handleCreate()}>Criar</ButtonComponent>
+                    }
                 </div>
             )}
 
         </div>
     );
 }
+
 
 //const ListPage = async () => {
 //    const { data } = await api.get('/object');

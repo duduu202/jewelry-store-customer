@@ -15,6 +15,7 @@ import UserEditor from "../User/UserEditor";
 import { ICartDTO } from "./dto/CartDTO";
 import { ButtonComponent } from "../../../components/Button/styles";
 import ListEditor from "../../../components/GenericEditor/ListEditor";
+import isIsoDate from "../../../utils/checkIsoDate";
 
 
 const route = '/cart';
@@ -78,17 +79,23 @@ const CartsListPage = () => {
         setIsOpenModal(true);
       };
 
+      const objectKeys = {
+        status: 'Status',
+        total_price: 'Valor Total',
+        created_at: 'Data do pedido',
+    }
+
 
     return (
       <PageContainer>
         <Navbar />
         <Container>
         <h1>Pedidos</h1>
-        <h1>Produtos</h1>
-            <ListEditor route={route} objectKeys={{
+            {/* <ListEditor route={route} objectKeys={{
                 status: 'Status',
                 total_price: 'Valor Total',
-            }} ></ListEditor>
+                created_at: 'Data de criação',
+            }} disableActions={true} disableCreate={true} ></ListEditor> */}
         {/* {loading ? (
             <p>Carregando...</p>
             ) : (
@@ -113,7 +120,32 @@ const CartsListPage = () => {
                     <ButtonComponent onClick={() => handleCreate()}>Criar</ButtonComponent>
                 </div>
             )} */}
+        <div>
+        {loading ? (
+            <p>Carregando...</p>
+            ) : (
+                <div>
+                    {/* <GenericList column_names={['Nome', "Estoque", "Imagem", "Preço" ,"Ações"]} data={data?.map((item) =>{ */}
+                    <GenericList column_names={["Items"].concat(Object.values(objectKeys))} data={data?.map((item) =>{
+                        return {
+                            id: item.id,
+                            //items: [item.name, item.stock, item.image ? <img src={item.image} alt="imagem" width="100px" height="100px"/> : <></>, item.price ? item.price : <></>,
+                            items: [item.cart_items.map(itm => itm.product.name).join(', ')
+                            ].concat(Object.keys(objectKeys).map(key => {
+                                if(isIsoDate(item[key])){
+                                    const date = new Date(item[key]);
+                                    return date.toLocaleDateString('pt-BR');
+                                }
+                                return item[key];
+                            }))
+                        
+                        }
+                    })}/>
+      
+                </div>
+            )}
 
+        </div>
         </Container>
       </PageContainer>
     );

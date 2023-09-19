@@ -4,6 +4,7 @@ import { NavLink } from 'react-router-dom';
 export const GenericListTable = styled.table`
   font-family: Arial, Helvetica, sans-serif;
 
+
   border-radius: 5px;
   width: 100%;
 `;

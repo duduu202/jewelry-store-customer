@@ -36,6 +36,7 @@ interface IAuthContextProps {
   setUser: React.Dispatch<React.SetStateAction<IUser>>;
   signIn: (user: IUser) => void;
   signOut: () => void;
+  getUser: () => IUser;
   isAuthenticated: boolean;
 }
 
@@ -67,6 +68,16 @@ export function AuthProvider({ children }: ChildrenProps) {
     setUser(user);
   }
 
+  const getUser = () => {
+    const user = localStorage.getItem("@token:user");
+
+    if (user) {
+      return JSON.parse(user);
+    }
+
+    return null;
+  }
+
   const signOut = () => {
     localStorage.removeItem("@token:user");
     localStorage.removeItem('@token:accessToken');
@@ -75,7 +86,7 @@ export function AuthProvider({ children }: ChildrenProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, setUser, signIn, signOut, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, setUser, signIn, signOut, isAuthenticated, getUser }}>
       {children}
     </AuthContext.Provider>
   );

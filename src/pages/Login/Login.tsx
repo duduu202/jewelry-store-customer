@@ -19,7 +19,7 @@ const Login = () => {
 
   useEffect(() => {
     setPassword('12345678');
-    setEmail('master@mestres.com');
+    setEmail('Eduardoliveira154@gmail.com');
   } ,[]);
 
   const handleSubmit = async (e:FormEvent) => {

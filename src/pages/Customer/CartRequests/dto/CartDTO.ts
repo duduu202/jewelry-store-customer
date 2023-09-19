@@ -13,15 +13,17 @@ export interface ICartItemDTO {
 export interface ICartDTO {
     id: string;
     user_id: string;
-    cupom_id: string | null;
     status: string;
-    paid_status: string;
-    address_id: string | null;
-    delivery_fee: number;
-    expires_at: string;
     created_at: string;
     updated_at: string;
-    cupom: any | null;
+    paid_status: string;
+    expires_at: string;
+    is_current: boolean;
+
+    cupom_id: string | undefined;
+    address_id: string | undefined;
+    delivery_fee: number;
+    cupom: any | undefined;
     cart_items: ICartItemDTO[];
     products_price: number;
     discount: number;

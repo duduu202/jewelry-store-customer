@@ -13,7 +13,8 @@ import {
   Icon,
 } from "./styles";
 
-import { FaHeadphones, FaChartPie, FaPlug, FaBook, FaUserAlt, FaSitemap, FaShoppingBag, FaShoppingCart } from "react-icons/fa";
+import { FaHeadphones, FaChartPie, FaPlug, FaBook, FaUserAlt, FaSitemap, FaShoppingBag, FaShoppingCart, FaHistory } from "react-icons/fa";
+import { GrHistory } from "react-icons/gr";
 import { IoSettingsSharp } from "react-icons/io5";
 import { ImArrowLeft2 } from "react-icons/im";
 import { ImArrowRight2 } from "react-icons/im";
@@ -28,40 +29,29 @@ import { Navigate, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const { signOut } = useAuth();
+  const { signOut, getUser } = useAuth();
   const navigate = useNavigate();
   return (
     <NavbarContainer isOpen={isExpanded}>
       <div>
-        <NavbarHeader>
-          <NavbarLogo isOpen={isExpanded} src={logo} alt="logotipo fale mais voip" />
-        </NavbarHeader>
 
-        <Icon type="button" onClick={() => setIsExpanded(props => !props)} isOpen={isExpanded}>
-          {isExpanded ? <ImArrowLeft2 className="arrow" size={12} /> : <ImArrowRight2 className="arrow" size={12} />}
-        </Icon>
 
         <NavbarMenu>
-          <NavbarMenuItem to="/dashboard" isOpen={isExpanded}>
-            <FaChartPie className="icon" size={18} />
-            <span>Dashboard</span>
-          </NavbarMenuItem>
+          <NavbarHeader>
+            <NavbarLogo isOpen={isExpanded} src={logo} alt="logotipo fale mais voip" />
+          </NavbarHeader>
 
-          <NavbarMenuItem to="/user" isOpen={isExpanded}>
-            <FaUserAlt className="icon" size={18} />
-            <span>Usuarios</span>
-          </NavbarMenuItem>
-
-          
           <NavbarMenuItem to="/product" isOpen={isExpanded}>
             <FaShoppingBag className="icon" size={18} />
             <span>Produtos</span>
           </NavbarMenuItem>
 
-          <NavbarMenuItem to="/cart" isOpen={isExpanded}>
-            <FaShoppingCart className="icon" size={18} />
-            <span>Pedidos</span>
+          <NavbarMenuItem to="/cartRequests" isOpen={isExpanded}>
+            <FaHistory className="icon" size={18} />
+            <span>Historico de Compras</span>
           </NavbarMenuItem>
+
+
 {/*  */}
           {/* <NavbarMenuItem to="/reports" isOpen={isExpanded}> */}
             {/* <BsFillFileEarmarkBarGraphFill className="icon" size={18} /> */}
@@ -78,7 +68,28 @@ const Navbar = () => {
             {/* <span>Contatos</span> */}
           {/* </NavbarMenuItem> */}
           
-        </NavbarMenu>
+          <NavbarFooter>
+          <NavbarMenuItem to="/cart" isOpen={isExpanded}>
+            <FaShoppingCart className="icon" size={18} />
+            <span>Carrinho</span>
+          </NavbarMenuItem>
+          <ProfileImage src={user} alt="imagem profile" isOpen={isExpanded} />
+
+          <ProfileContainer isOpen={isExpanded}>
+            <ProfileName>{getUser().user.name}</ProfileName>
+            {/* <ProfileOccupation>Administrador</ProfileOccupation> */}
+            <ButtonComponent
+            type="button"
+            onClick={() => {
+              signOut();
+              navigate('/login');
+            }}
+            >
+            logout
+            </ButtonComponent>
+          </ProfileContainer>
+      </NavbarFooter>
+      </NavbarMenu>
       </div>
 
       {/* <NavbarMenu> */}
@@ -88,23 +99,7 @@ const Navbar = () => {
         {/* </NavbarMenuItem> */}
       {/* </NavbarMenu> */}
 
-      <NavbarFooter>
-        <ProfileImage src={user} alt="imagem profile" isOpen={isExpanded} />
 
-        <ProfileContainer isOpen={isExpanded}>
-          <ProfileName>Duduu202 FullStack :D</ProfileName>
-          <ProfileOccupation>Administrador</ProfileOccupation>
-          <ButtonComponent
-          type="button"
-          onClick={() => {
-            signOut();
-            navigate('/login');
-          }}
-        >
-          logout
-        </ButtonComponent>
-        </ProfileContainer>
-      </NavbarFooter>
     </NavbarContainer>
   );
 }
