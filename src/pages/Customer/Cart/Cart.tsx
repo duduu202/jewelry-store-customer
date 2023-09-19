@@ -63,7 +63,7 @@ const CartPage = () => {
                   <h1>descrição: </h1> <h3>{item.product.description}</h3>
                   <h1>preço: </h1> <h3>{item.product.price}</h3>
                   <h1>quantidade: </h1> <h3>{item.quantity}</h3>
-                  <ButtonComponent onClick={() => handleRemoveItem(item.id)}>Comprar</ButtonComponent>
+                  <ButtonComponent onClick={() => handleRemoveItem(item.id)}>remover</ButtonComponent>
                   <h1>_________________</h1>
                 </div>
               )
