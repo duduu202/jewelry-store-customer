@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
   ::-webkit-scrollbar {
@@ -53,11 +53,15 @@ const GlobalStyle = createGlobalStyle`
     background-color: #fff;
     height: 100vh;
     text-rendering: optimizeLegibility;
-    font-family: 'Saira';
+    font-family: 'Saira', sans-serif;
   }
 
   button {
     cursor: pointer;
+  }
+  [disabled] {
+    opacity: 0.8;
+    cursor: not-allowed;
   }
 `;
 

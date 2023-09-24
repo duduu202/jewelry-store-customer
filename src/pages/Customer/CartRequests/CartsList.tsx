@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IPaginatedResponse } from "../../../Interfaces/IPaginatedResponse";
@@ -16,82 +15,80 @@ import { ICartDTO } from "./dto/CartDTO";
 import { ButtonComponent } from "../../../components/Button/styles";
 import ListEditor from "../../../components/GenericEditor/ListEditor";
 import isIsoDate from "../../../utils/checkIsoDate";
+import Layout from "../../../components/Layout/Layout";
 
-
-const route = '/cart';
+const route = "/cart";
 
 const CartsListPage = () => {
-    //const { data } = await api.get('/user');
-    console.log('CartsListPage')
-    const [ data, setData ] = useState<ICartDTO[]>();
-    const [ loading, setLoading ] = useState(true);
-    const navigate = useNavigate();
+  // const { data } = await api.get('/user');
+  console.log("CartsListPage");
+  const [data, setData] = useState<ICartDTO[]>();
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const { data } = await api.get<IPaginatedResponse<ICartDTO>>(route);
-            console.log("data", data.results);
-            setData(data.results);
-            setLoading(false);
-        }
-        fetchData();
-    }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data } = await api.get<IPaginatedResponse<ICartDTO>>(route);
+      console.log("data", data.results);
+      setData(data.results);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
 
-    const handleDelete = async (id: string) => {
-        await api.delete(route + `/${id}`);
-        const { data } = await api.get(route);
-        setData(data.results);
+  const handleDelete = async (id: string) => {
+    await api.delete(`${route}/${id}`);
+    const { data } = await api.get(route);
+    setData(data.results);
+  };
+
+  const handleSave = async (user: ICartDTO) => {
+    const { id, role, created_at, updated_at, address, ...rest } = user;
+    try {
+      if (user.id) {
+        await api.put(`${route}/${user.id}`, rest);
+      } else {
+        await api.post(route, rest);
+      }
+    } catch (error) {
+      handleError(error);
     }
 
-    const handleSave = async (user: ICartDTO) => {
-        const { id, role, created_at, updated_at, address, ...rest } = user;
-        try{
-            if(user.id){
-                await api.put(route + `/${user.id}`, rest);
-            }
-            else{
-                await api.post(route, rest);
-            }
-        } catch (error) {
-            handleError(error);
-        }
-        
-        const { data } = await api.get(route);
-        setData(data.results);
-        setIsOpenModal(false);
-    }
+    const { data } = await api.get(route);
+    setData(data.results);
+    setIsOpenModal(false);
+  };
 
+  const [editingUserId, setEditingUserId] = useState<string | undefined>(
+    undefined
+  );
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
-    const [editingUserId, setEditingUserId] = useState<string | undefined>(undefined);
-    const [ isOpenModal, setIsOpenModal ] = useState(false);
+  const handleEdit = (id: string) => {
+    // Set the ID of the user being edited in the state
+    // navigate(`/users/edit/${id}`);
+    setEditingUserId(id);
+    setIsOpenModal(true);
+  };
 
-    const handleEdit = (id: string) => {
-        // Set the ID of the user being edited in the state
-        //navigate(`/users/edit/${id}`);
-        setEditingUserId(id);
-        setIsOpenModal(true);
-      };
+  const handleCreate = () => {
+    // Set the ID of the user being edited in the state
+    // navigate(`/users/create/`);
+    setEditingUserId(undefined);
+    setIsOpenModal(true);
+  };
 
-      const handleCreate = () => {
-        // Set the ID of the user being edited in the state
-        //navigate(`/users/create/`);
-        setEditingUserId(undefined);
-        setIsOpenModal(true);
-      };
+  const objectKeys = {
+    status: "Status",
+    total_price: "Valor Total",
+    created_at: "Data do pedido",
+  };
 
-      const objectKeys = {
-        status: 'Status',
-        total_price: 'Valor Total',
-        created_at: 'Data do pedido',
-    }
-
-
-    return (
-      <PageContainer>
-        <Navbar />
-        <Container>
+  return (
+    <Layout>
+      <Container>
         <h1>Pedidos</h1>
-            {/* <ListEditor route={route} objectKeys={{
+        {/* <ListEditor route={route} objectKeys={{
                 status: 'Status',
                 total_price: 'Valor Total',
                 created_at: 'Data de criação',
@@ -121,53 +118,56 @@ const CartsListPage = () => {
                 </div>
             )} */}
         <div>
-        {loading ? (
+          {loading ? (
             <p>Carregando...</p>
-            ) : (
-                <div>
-                    {/* <GenericList column_names={['Nome', "Estoque", "Imagem", "Preço" ,"Ações"]} data={data?.map((item) =>{ */}
-                    <GenericList column_names={["Items"].concat(Object.values(objectKeys))} data={data?.map((item) =>{
-                        return {
-                            id: item.id,
-                            //items: [item.name, item.stock, item.image ? <img src={item.image} alt="imagem" width="100px" height="100px"/> : <></>, item.price ? item.price : <></>,
-                            items: [item.cart_items.map(itm => itm.product.name).join(', ')
-                            ].concat(Object.keys(objectKeys).map(key => {
-                                if(isIsoDate(item[key])){
-                                    const date = new Date(item[key]);
-                                    return date.toLocaleDateString('pt-BR');
-                                }
-                                return item[key];
-                            }))
-                        
+          ) : (
+            <div>
+              {/* <GenericList column_names={['Nome', "Estoque", "Imagem", "Preço" ,"Ações"]} data={data?.map((item) =>{ */}
+              <GenericList
+                column_names={["Items"].concat(Object.values(objectKeys))}
+                data={data?.map((item) => {
+                  return {
+                    id: item.id,
+                    // items: [item.name, item.stock, item.image ? <img src={item.image} alt="imagem" width="100px" height="100px"/> : <></>, item.price ? item.price : <></>,
+                    items: [
+                      item.cart_items.map((itm) => itm.product.name).join(", "),
+                    ].concat(
+                      Object.keys(objectKeys).map((key) => {
+                        if (isIsoDate(item[key])) {
+                          const date = new Date(item[key]);
+                          return date.toLocaleDateString("pt-BR");
                         }
-                    })}/>
-      
-                </div>
-            )}
-
+                        return item[key];
+                      })
+                    ),
+                  };
+                })}
+              />
+            </div>
+          )}
         </div>
-        </Container>
-      </PageContainer>
-    );
-}
+      </Container>
+    </Layout>
+  );
+};
 
-//const CartsListPage = async () => {
+// const CartsListPage = async () => {
 //    const { data } = await api.get('/user');
 //    console.log("data",data.results)
 //    return (
 //      <PageContainer>
-//        
+//
 //          <h1>Lista de usuários</h1>
 //          <ul>
 //              {data.results.map((user) => (
 //                  <li key={user.id}>{user.name}</li>
 //              ))}
-//    
+//
 //          </ul>
-//                
-//                
+//
+//
 //      </PageContainer>
 //    );
-//}
+// }
 
 export default CartsListPage;

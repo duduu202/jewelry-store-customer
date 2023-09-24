@@ -1,3 +1,4 @@
+import Header from "../../components/Header/Header";
 import Navbar from "../../components/Navbar/Navbar";
 import { Container } from "../../styles/style";
 import { PageContainer } from "./styles";
@@ -5,7 +6,7 @@ import { PageContainer } from "./styles";
 const HomePage = () => {
   return (
     <PageContainer>
-      <Navbar />
+      <Header />
       <Container></Container>
     </PageContainer>
   );

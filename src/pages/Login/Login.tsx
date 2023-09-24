@@ -1,70 +1,79 @@
-import { FormEvent, useEffect, useState } from 'react';
-import { useAuth } from '../../hooks/useAuth';
-import { Link, useNavigate } from 'react-router-dom';
-import api from '../../services/api';
-import handleError from '../../utils/message';
-import { toast } from 'react-toastify';
+import { FormEvent, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useAuth } from "../../hooks/useAuth";
+import api from "../../services/api";
+import handleError from "../../utils/message";
+import InputTextFloat from "../../components/InputTextFloat/InputTextFloat";
+import { ButtonSubmit, Container, Form, FormContainer } from "./styles";
+import { LoginFormType, LoginSchema } from "../../validations/Login.validation";
 
-const loginRoute = '/user/session';
-
-
-
+const loginRoute = "/user/session";
+type FieldValues = {
+  email: string;
+  password: string;
+  remember?: boolean;
+};
 const Login = () => {
-
   const navigate = useNavigate();
   const { signIn } = useAuth();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const {
+    formState: { errors, isSubmitting },
+    handleSubmit,
+    register,
+  } = useForm<FieldValues>({
+    resolver: yupResolver(LoginSchema),
+    defaultValues: {
+      email: "Eduardoliveira154@gmail.com",
+      password: "12345678",
+    },
+  });
 
-  useEffect(() => {
-    setPassword('12345678');
-    setEmail('Eduardoliveira154@gmail.com');
-  } ,[]);
-
-  const handleSubmit = async (e:FormEvent) => {
-    e.preventDefault();
-    try{
-      const { data } = await api.post(loginRoute, { email, password, remember_me: true });
+  const onSubmit: SubmitHandler<FieldValues> = async (value) => {
+    try {
+      const { data } = await api.post(loginRoute, {
+        email: value.email,
+        password: value.password,
+        remember_me: true,
+      });
       console.log(data);
       signIn(data);
-      navigate('/');
-    }
-    catch(err){
+      navigate("/");
+    } catch (err) {
       handleError(err);
     }
-
-
   };
 
   return (
-    <div>
+    <Container>
       <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email:</label>
-          <input
+      <FormContainer>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <InputTextFloat
+            label="Email"
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            {...register("email")}
+            error={errors.email?.message?.toString()}
           />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input
+          <InputTextFloat
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
+            label="Senha"
+            {...register("password")}
+            error={errors.password?.message?.toString()}
           />
-        </div>
-        <button type="submit">Login</button>
-      </form>
-      <p>
-        Don't have an account? <Link to="/signup">Sign up</Link>
-      </p>
-    </div>
+
+          <ButtonSubmit type="submit" disabled={isSubmitting}>
+            Login
+          </ButtonSubmit>
+        </Form>
+        <p>
+          Don't have an account? <Link to="/signup">Sign up</Link>
+        </p>
+      </FormContainer>
+    </Container>
   );
 };
 

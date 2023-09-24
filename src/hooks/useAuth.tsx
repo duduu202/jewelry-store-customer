@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 
 export interface IUser {
   user: User;
@@ -27,7 +27,7 @@ export interface User {
   password?: string;
   role: string;
   address?: Address[];
-  created_at: string ;
+  created_at: string;
   updated_at: string;
 }
 
@@ -46,7 +46,7 @@ interface ChildrenProps {
 
 const AuthContext = createContext({} as IAuthContextProps);
 
-export function AuthProvider({ children }: ChildrenProps) {
+export const AuthProvider = ({ children }: ChildrenProps) => {
   const [user, setUser] = useState<IUser>(() => {
     const user = localStorage.getItem("@token:user");
 
@@ -66,7 +66,7 @@ export function AuthProvider({ children }: ChildrenProps) {
     localStorage.setItem("@token:accessToken", user.access_token);
     localStorage.setItem("@token:refreshToken", user.access_token);
     setUser(user);
-  }
+  };
 
   const getUser = () => {
     const user = localStorage.getItem("@token:user");
@@ -76,21 +76,29 @@ export function AuthProvider({ children }: ChildrenProps) {
     }
 
     return null;
-  }
+  };
 
   const signOut = () => {
     localStorage.removeItem("@token:user");
-    localStorage.removeItem('@token:accessToken');
-    localStorage.removeItem('@token:refreshToken');
+    localStorage.removeItem("@token:accessToken");
+    localStorage.removeItem("@token:refreshToken");
     setUser({} as IUser);
-  }
+  };
 
-  return (
-    <AuthContext.Provider value={{ user, setUser, signIn, signOut, isAuthenticated, getUser }}>
-      {children}
-    </AuthContext.Provider>
+  const memo = useMemo(
+    () => ({
+      user,
+      setUser,
+      signIn,
+      signOut,
+      isAuthenticated,
+      getUser,
+    }),
+    [user, setUser, signIn, signOut, isAuthenticated, getUser]
   );
-}
+
+  return <AuthContext.Provider value={memo}>{children}</AuthContext.Provider>;
+};
 
 export default AuthContext;
 

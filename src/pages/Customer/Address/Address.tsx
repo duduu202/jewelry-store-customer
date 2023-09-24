@@ -16,83 +16,90 @@ import { ButtonComponent } from "../../../components/Button/styles";
 import ProductEditor from "./ProductEditor";
 import ListPage from "../../../components/GenericEditor/ListEditor";
 import ListEditor from "../../../components/GenericEditor/ListEditor";
+import Layout from "../../../components/Layout/Layout";
 
-
-const route = '/address';
+const route = "/address";
 
 const AddressListPage = () => {
-    //const { data } = await api.get('/user');
-    console.log('AddressListPage')
-    const [ data, setData ] = useState<any[]>();
-    const [ loading, setLoading ] = useState(true);
-    const navigate = useNavigate();
+  // const { data } = await api.get('/user');
+  console.log("AddressListPage");
+  const [data, setData] = useState<any[]>();
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const { data } = await api.get<IPaginatedResponse<any>>(route);
-            console.log("data", data.results);
-            setData(data.results);
-            setLoading(false);
-        }
-        fetchData();
-    }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data } = await api.get<IPaginatedResponse<any>>(route);
+      console.log("data", data.results);
+      setData(data.results);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
 
-    const handleDelete = async (id: string) => {
-        await api.delete(route + `/${id}`);
-        const { data } = await api.get(route);
-        setData(data.results);
+  const handleDelete = async (id: string) => {
+    await api.delete(`${route}/${id}`);
+    const { data } = await api.get(route);
+    setData(data.results);
+  };
+
+  const handleSave = async (user: any) => {
+    const { price, stock, name, description, ...rest } = user;
+    console.log("product", user);
+    try {
+      if (user.id) {
+        await api.put(`${route}/${user.id}`, {
+          price,
+          stock,
+          name,
+          description,
+        });
+      } else {
+        await api.post(route, { price, stock, name, description });
+      }
+    } catch (error) {
+      handleError(error);
     }
 
-    const handleSave = async (user: any) => {
-        const { price, stock, name, description, ...rest } = user;
-        console.log("product",user)
-        try{
-            if(user.id){
-                await api.put(route + `/${user.id}`, {price, stock, name, description});
-            }
-            else{
-                await api.post(route, {price, stock, name, description});
-            }
-        } catch (error) {
-            handleError(error);
-        }
-        
-        const { data } = await api.get(route);
-        setData(data.results);
-        setIsOpenModal(false);
-    }
+    const { data } = await api.get(route);
+    setData(data.results);
+    setIsOpenModal(false);
+  };
 
+  const [editingUserId, setEditingUserId] = useState<string | undefined>(
+    undefined
+  );
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
-    const [editingUserId, setEditingUserId] = useState<string | undefined>(undefined);
-    const [ isOpenModal, setIsOpenModal ] = useState(false);
+  const handleEdit = (id: string) => {
+    // Set the ID of the user being edited in the state
+    // navigate(`/users/edit/${id}`);
+    setEditingUserId(id);
+    setIsOpenModal(true);
+  };
 
-    const handleEdit = (id: string) => {
-        // Set the ID of the user being edited in the state
-        //navigate(`/users/edit/${id}`);
-        setEditingUserId(id);
-        setIsOpenModal(true);
-      };
+  const handleCreate = () => {
+    // Set the ID of the user being edited in the state
+    // navigate(`/users/create/`);
+    setEditingUserId(undefined);
+    setIsOpenModal(true);
+  };
 
-      const handleCreate = () => {
-        // Set the ID of the user being edited in the state
-        //navigate(`/users/create/`);
-        setEditingUserId(undefined);
-        setIsOpenModal(true);
-      };
-
-    return (
-      <PageContainer>
-        <Navbar />
-        <Container>
+  return (
+    <Layout>
+      <Container>
         <h1>Cartões</h1>
-            <ListEditor route={route} objectKeys={{
-                street: "Rua",
-                number: "Número",
-                district: "Bairoo",
-                city: "Cidade",
-                state: "Estado",
-                zip_code: "CEP",
-            }} ></ListEditor>
+        <ListEditor
+          route={route}
+          objectKeys={{
+            street: "Rua",
+            number: "Número",
+            district: "Bairoo",
+            city: "Cidade",
+            state: "Estado",
+            zip_code: "CEP",
+          }}
+        />
         {/* {loading ? (
             <p>Carregando...</p>
             ) : (
@@ -118,29 +125,28 @@ const AddressListPage = () => {
                     <ButtonComponent onClick={() => handleCreate()}>Criar</ButtonComponent>
                 </div>
             )} */}
+      </Container>
+    </Layout>
+  );
+};
 
-        </Container>
-      </PageContainer>
-    );
-}
-
-//const AddressListPage = async () => {
+// const AddressListPage = async () => {
 //    const { data } = await api.get('/user');
 //    console.log("data",data.results)
 //    return (
 //      <PageContainer>
-//        
+//
 //          <h1>Lista de usuários</h1>
 //          <ul>
 //              {data.results.map((user) => (
 //                  <li key={user.id}>{user.name}</li>
 //              ))}
-//    
+//
 //          </ul>
-//                
-//                
+//
+//
 //      </PageContainer>
 //    );
-//}
+// }
 
 export default AddressListPage;
