@@ -4,10 +4,9 @@ import {
   GenericListCell,
   GenericListHeaderCell,
   GenericListRow,
+  GenericSelectedCell,
 } from "./styles";
 import api from "../../services/api";
-
-
 
 interface Props {
   column_names?: string[];
@@ -16,11 +15,9 @@ interface Props {
 interface IData {
   id: string;
   items: any[];
+  highlight?: boolean;
 }
-function GenericList({
-  column_names,
-  data,
-}: Props) {
+function GenericList({ column_names, data }: Props) {
   return (
     <div>
       <GenericListTable>
@@ -34,9 +31,13 @@ function GenericList({
         <tbody>
           {data?.map((line) => (
             <GenericListRow key={line.id}>
-              {line.items.map((item) => (
-                <GenericListCell>{item}</GenericListCell>
-              ))}
+              {line.highlight
+                ? line.items.map((item) => (
+                    <GenericSelectedCell>{item}</GenericSelectedCell>
+                  ))
+                : line.items.map((item) => (
+                    <GenericListCell>{item}</GenericListCell>
+                  ))}
             </GenericListRow>
           ))}
         </tbody>

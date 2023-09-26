@@ -1,9 +1,8 @@
-import styled, { keyframes } from 'styled-components';
-import { NavLink } from 'react-router-dom';
+import styled, { keyframes } from "styled-components";
+import { NavLink } from "react-router-dom";
 
 export const GenericListTable = styled.table`
   font-family: Arial, Helvetica, sans-serif;
-
 
   border-radius: 5px;
   width: 100%;
@@ -13,6 +12,13 @@ export const GenericListCell = styled.td`
   border: 1px solid #ddd;
   border-radius: 5px;
   padding: 8px;
+`;
+
+export const GenericSelectedCell = styled.td`
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 8px;
+  background-color: ${(props) => props.theme.colors.primary};
 `;
 
 export const GenericListHeaderCell = styled.th`
@@ -26,7 +32,6 @@ export const GenericListHeaderCell = styled.th`
   border-radius: 5px;
 `;
 
-export const GenericListRow= styled.tr`
+export const GenericListRow = styled.tr`
   background-color: ${(props) => props.theme.colors.secondary};
 `;
-

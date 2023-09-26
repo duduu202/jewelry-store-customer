@@ -81,7 +81,7 @@ const CartsListPage = () => {
   const objectKeys = {
     status: "Status",
     total_price: "Valor Total",
-    created_at: "Data do pedido",
+    updated_at: "Data do pedido",
   };
 
   return (
@@ -130,9 +130,11 @@ const CartsListPage = () => {
                     id: item.id,
                     // items: [item.name, item.stock, item.image ? <img src={item.image} alt="imagem" width="100px" height="100px"/> : <></>, item.price ? item.price : <></>,
                     items: [
-                      item.cart_items.map((itm) => itm.product.name).join(", "),
+                      item.cart_items
+                        ?.map((itm) => itm.product.name)
+                        .join(", "),
                     ].concat(
-                      Object.keys(objectKeys).map((key) => {
+                      Object.keys(objectKeys)?.map((key) => {
                         if (isIsoDate(item[key])) {
                           const date = new Date(item[key]);
                           return date.toLocaleDateString("pt-BR");
