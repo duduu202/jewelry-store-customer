@@ -47,26 +47,30 @@ const ProductsListPage = () => {
   };
 
   const handlerAddToCart = async (id: string) => {
-    const currentCart = await api.get<ICartDTO>("/cart/current_cart");
+    try {
+      const currentCart = await api.get<ICartDTO>("/cart/current_cart");
 
-    console.log("currentCart", currentCart.data);
+      console.log("currentCart", currentCart.data);
 
-    const cart = currentCart.data;
+      const cart = currentCart.data;
 
-    await api.put(`/cart/${cart.id}`, {
-      items: [
-        ...cart.cart_items.map((item) => {
-          return {
-            product_id: item.product.id,
-            quantity: item.quantity,
-          };
-        }),
-        {
-          product_id: id,
-          quantity: 1,
-        },
-      ],
-    });
+      await api.put(`/cart/${cart.id}`, {
+        items: [
+          ...cart.cart_items.map((item) => {
+            return {
+              product_id: item.product.id,
+              quantity: item.quantity,
+            };
+          }),
+          {
+            product_id: id,
+            quantity: 1,
+          },
+        ],
+      });
+    } catch (error) {
+      handleError(error);
+    }
   };
 
   const [editingUserId, setEditingUserId] = useState<string | undefined>(
@@ -105,7 +109,7 @@ const ProductsListPage = () => {
               />
               <h2>{product.name}</h2>
               <p>Preço: {product.price}</p>
-              <p>Estoque: {product.stock}</p>
+              <p>Estoque: {product.stock_available}</p>
               {/* Adicione mais informações conforme necessário */}
               <ButtonComponent onClick={() => handlerAddToCart(product.id)}>
                 Comprar

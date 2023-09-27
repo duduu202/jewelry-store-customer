@@ -47,7 +47,7 @@ const CartPage = () => {
 
     const cart = currentCart.data;
 
-    const items = cart.cart_items.map((item) => {
+    const items = cart.cart_items?.map((item) => {
       if (item.id === id) {
         return {
           product_id: item.product.id,
@@ -79,7 +79,7 @@ const CartPage = () => {
 
     const cart = currentCart.data;
 
-    const items = cart.cart_items.map((item) => {
+    const items = cart.cart_items?.map((item) => {
       if (item.id === id) {
         return {
           product_id: item.product.id,
@@ -129,7 +129,7 @@ const CartPage = () => {
             /> */}
           <GenericList
             column_names={["name", "price", "quantity", "ações"]}
-            data={data?.cart_items.map((item) => {
+            data={data?.cart_items?.map((item) => {
               return {
                 id: item.id,
                 items: [

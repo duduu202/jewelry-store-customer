@@ -13,7 +13,7 @@ import ListEditor from "../../../components/GenericEditor/ListEditor";
 import { GenericListCell } from "../../../components/GenericList/styles";
 import { useNavigate } from "react-router-dom";
 import { SideDiv } from "./styles";
-import handleError from "../../../utils/message";
+import handleError, { handleSuccess } from "../../../utils/message";
 
 const route = "/cart";
 const PayCartPage = () => {
@@ -108,6 +108,11 @@ const PayCartPage = () => {
     console.log(selectedCards);
   };
 
+  const getPercentageValue = (percentage: number = 0) => {
+    console.log("getPercentageValue", percentage, data?.total_price);
+    return (data?.total_price * percentage) / 100;
+  };
+
   const handleRemoveItem = async (id: string) => {
     const currentCart = await api.get<ICartDTO>("/cart/current_cart");
 
@@ -120,7 +125,7 @@ const PayCartPage = () => {
     });
 
     await api.put(`/cart/${cart.id}`, {
-      items: items.map((item) => {
+      items: items?.map((item) => {
         return {
           product_id: item.product.id,
           quantity: item.quantity,
@@ -137,7 +142,7 @@ const PayCartPage = () => {
 
     const cart = currentCart.data;
 
-    const items = cart.cart_items.map((item) => {
+    const items = cart.cart_items?.map((item) => {
       if (item.id === id) {
         return {
           product_id: item.product.id,
@@ -151,7 +156,7 @@ const PayCartPage = () => {
     });
 
     await api.put(`/cart/${cart.id}`, {
-      items: items.map((item) => {
+      items: items?.map((item) => {
         return {
           product_id: item.product_id,
           quantity: item.quantity,
@@ -169,7 +174,7 @@ const PayCartPage = () => {
 
     const cart = currentCart.data;
 
-    const items = cart.cart_items.map((item) => {
+    const items = cart.cart_items?.map((item) => {
       if (item.id === id) {
         return {
           product_id: item.product.id,
@@ -183,7 +188,7 @@ const PayCartPage = () => {
     });
 
     await api.put(`/cart/${cart.id}`, {
-      items: items.map((item) => {
+      items: items?.map((item) => {
         return {
           product_id: item.product_id,
           quantity: item.quantity,
@@ -220,6 +225,7 @@ const PayCartPage = () => {
         "/cart/pay/" + currentCart.data.id,
         postObject
       );
+      handleSuccess("Compra realizada com sucesso");
     } catch (error) {
       handleError(error);
     }
@@ -242,7 +248,7 @@ const PayCartPage = () => {
             <h1>Carrinho</h1>
             <GenericList
               column_names={["name", "preço", "quantidade", "ações"]}
-              data={data?.cart_items.map((item) => {
+              data={data?.cart_items?.map((item) => {
                 return {
                   id: item.id,
                   items: [
@@ -308,6 +314,7 @@ const PayCartPage = () => {
                 "Titular do cartão",
                 "Ações",
                 "Porcentagem",
+                "Valor a ser pago",
               ]}
               data={cards?.map((item) => {
                 return {
@@ -329,9 +336,11 @@ const PayCartPage = () => {
                         if (percentage > 100 || percentage < 0) {
                           return;
                         }
+                        item.percentage = percentage;
                         addCard(item.id, percentage);
                       }}
                     />,
+                    getPercentageValue(item.percentage),
                   ],
                 };
               })}

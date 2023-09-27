@@ -78,12 +78,6 @@ const CartsListPage = () => {
     setIsOpenModal(true);
   };
 
-  const objectKeys = {
-    status: "Status",
-    total_price: "Valor Total",
-    updated_at: "Data do pedido",
-  };
-
   return (
     <Layout>
       <Container>
@@ -124,7 +118,7 @@ const CartsListPage = () => {
             <div>
               {/* <GenericList column_names={['Nome', "Estoque", "Imagem", "Preço" ,"Ações"]} data={data?.map((item) =>{ */}
               <GenericList
-                column_names={["Items"].concat(Object.values(objectKeys))}
+                column_names={["Items", "Status", "Valor Total", "Data"]}
                 data={data?.map((item) => {
                   return {
                     id: item.id,
@@ -132,16 +126,14 @@ const CartsListPage = () => {
                     items: [
                       item.cart_items
                         ?.map((itm) => itm.product.name)
-                        .join(", "),
-                    ].concat(
-                      Object.keys(objectKeys)?.map((key) => {
-                        if (isIsoDate(item[key])) {
-                          const date = new Date(item[key]);
-                          return date.toLocaleDateString("pt-BR");
-                        }
-                        return item[key];
-                      })
-                    ),
+                        .join(", ") || "",
+                      item.is_current ? "Carrinho Atual" : item.status,
+                      item.total_price,
+                      isIsoDate(item.updated_at)
+                        ? new Date(item.updated_at).toLocaleDateString()
+                        : "",
+                    ],
+                    highlight: item.is_current,
                   };
                 })}
               />
