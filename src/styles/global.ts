@@ -1,6 +1,10 @@
 import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
+
+:root {
+  /* color-scheme: dark; */
+}
   ::-webkit-scrollbar {
     width: 4px;
     display: block;

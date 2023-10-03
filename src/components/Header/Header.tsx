@@ -13,9 +13,12 @@ import { useAuth } from "../../hooks/useAuth";
 import userImg from "../../assets/user.png";
 import HeaderProfile from "../HeaderProfile/HeaderProfile";
 import HeaderCart from "../HeaderCart/HeaderCart";
+import useQueryGet from "../../services/queryGet";
+import { ICartDTO } from "../../pages/Customer/CartRequests/dto/CartDTO";
 
 const Header = () => {
   const { user } = useAuth();
+
   return (
     <Container>
       <Logo src={logo} alt="logotipo fale mais voip" />

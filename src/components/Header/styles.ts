@@ -36,5 +36,6 @@ export const NavbarLink = styled(NavLink)`
 
   &.active {
     color: ${(props) => props.theme.colors.primary};
+    /* color: #000; */
   }
 `;

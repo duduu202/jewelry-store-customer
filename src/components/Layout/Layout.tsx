@@ -1,13 +1,13 @@
 import { PropsWithChildren } from "react";
 import Header from "../Header/Header";
-import { PageContainer } from "./styles";
+import { ChildrenContainer, PageContainer } from "./styles";
 
 interface Props extends PropsWithChildren {}
 const Layout = ({ children }: Props) => {
   return (
     <PageContainer>
       <Header />
-      {children}
+      <ChildrenContainer>{children}</ChildrenContainer>
     </PageContainer>
   );
 };

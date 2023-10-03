@@ -19,31 +19,29 @@ import { Grid, GridItem } from "../../../components/Grid/style";
 import { ICartDTO } from "../CartRequests/dto/CartDTO";
 import Header from "../../../components/Header/Header";
 import Layout from "../../../components/Layout/Layout";
+import useQueryList from "../../../services/queryList";
+import useQueryInfinite from "../../../services/queryInfinite";
+import { useCart } from "../../../contexts/cart";
 
 const route = "/product";
 
 const ProductsListPage = () => {
   // const { data } = await api.get('/user');
   console.log("ProductsListPage");
-  const [data, setData] = useState<IProductDTO[]>();
-  const [loading, setLoading] = useState(true);
+  // const {} = useQueryList<IProductDTO>({
+  //   url: "/product",
+  // });
+  const { addProduct } = useCart();
+  const { data, ref, refetch, isLoading } = useQueryInfinite<IProductDTO>({
+    queryKey: ["product"],
+    url: "/product",
+  });
   const [cart, setCart] = useState<ICartDTO>();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data } = await api.get<IPaginatedResponse<IProductDTO>>(route);
-      console.log("data", data.results);
-      setData(data.results);
-      setLoading(false);
-    };
-    fetchData();
-  }, []);
-
   const handleDelete = async (id: string) => {
     await api.delete(`${route}/${id}`);
-    const { data } = await api.get(route);
-    setData(data.results);
+    refetch();
   };
 
   const handlerAddToCart = async (id: string) => {
@@ -95,7 +93,7 @@ const ProductsListPage = () => {
   return (
     <Layout>
       <h1>Produtos</h1>
-      {loading ? (
+      {isLoading ? (
         <p>Carregando...</p>
       ) : (
         <Grid>
@@ -111,7 +109,7 @@ const ProductsListPage = () => {
               <p>Preço: {product.price}</p>
               <p>Estoque: {product.stock_available}</p>
               {/* Adicione mais informações conforme necessário */}
-              <ButtonComponent onClick={() => handlerAddToCart(product.id)}>
+              <ButtonComponent onClick={() => addProduct(product.id)}>
                 Comprar
               </ButtonComponent>
               {/* <button onClick={() => handleDelete(product.id)}>Excluir</button> */}
@@ -119,6 +117,7 @@ const ProductsListPage = () => {
           ))}
         </Grid>
       )}
+      <div ref={ref} />
     </Layout>
   );
 };
