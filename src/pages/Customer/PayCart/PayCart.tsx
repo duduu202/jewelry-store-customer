@@ -235,9 +235,21 @@ const PayCartPage = () => {
       const { data: resData } = await api.get<ICoupon>(
         `/coupon/${value.coupon}`
       );
-      if (!coupons.find((item) => item.id === resData.id)) {
-        setCoupons((prev) => [...prev, resData]);
+      console.log(resData);
+
+      if (coupons.find((item) => item.id === resData.id)) {
+        return;
       }
+      console.log(resData.quantity);
+
+      if (resData.quantity <= 0) {
+        couponSetError("coupon", {
+          message: "Cupom esgotado",
+          type: "value",
+        });
+        return;
+      }
+      setCoupons((prev) => [...prev, resData]);
       couponReset({
         coupon: "",
       });
