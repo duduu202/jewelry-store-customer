@@ -7,7 +7,7 @@ import AppRoutes from "./routes/Routes";
 import GlobalStyle from "./styles/global";
 import { theme } from "./styles/theme";
 import queryClient from "./services/queryClient";
-import CartProvider from "./contexts/cart";
+import CartProvider from "./contexts/CartContext";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

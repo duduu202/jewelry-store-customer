@@ -21,7 +21,7 @@ import Header from "../../../components/Header/Header";
 import Layout from "../../../components/Layout/Layout";
 import useQueryList from "../../../services/queryList";
 import useQueryInfinite from "../../../services/queryInfinite";
-import { useCart } from "../../../contexts/cart";
+import { useCart } from "../../../contexts/CartContext";
 
 const route = "/product";
 

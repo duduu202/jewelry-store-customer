@@ -1,4 +1,8 @@
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { BsTrashFill } from "react-icons/bs";
 import Navbar from "../../../components/Navbar/Navbar";
 import api from "../../../services/api";
 import { Container } from "../../../styles/style";
@@ -11,11 +15,26 @@ import Layout from "../../../components/Layout/Layout";
 import GenericList from "../../../components/GenericList/GenericList";
 import ListEditor from "../../../components/GenericEditor/ListEditor";
 import { GenericListCell } from "../../../components/GenericList/styles";
-import { useNavigate } from "react-router-dom";
-import { SideDiv } from "./styles";
+import {
+  Button,
+  ButtonIcon,
+  CoupomCell,
+  CoupomHead,
+  CouponSection,
+  Coupons,
+  InputWrapper,
+  SideDiv,
+} from "./styles";
 import handleError, { handleSuccess } from "../../../utils/message";
+import { formatCurrency } from "../../../utils/formatCurrency";
+import InputTextFloat from "../../../components/InputTextFloat/InputTextFloat";
+import { ICoupon } from "../../../Interfaces/coupon";
+import CouponSchema from "../../../validations/Coupon.validation";
 
 const route = "/cart";
+type CoupomFormValue = {
+  coupon: string;
+};
 const PayCartPage = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<ICartDTO>();
@@ -24,6 +43,18 @@ const PayCartPage = () => {
   const [cards, setCards] = useState<any>();
   const [selectedAddress, setSelectedAddress] = useState<any>();
   const [selectedCards, setSelectedCards] = useState<any[]>([]);
+  const [coupomInput, setCoupomInput] = useState<string>("");
+  const [coupons, setCoupons] = useState<ICoupon[]>([]);
+
+  const {
+    register: couponRegister,
+    formState: { errors: couponErrors },
+    handleSubmit: couponHandleSubmit,
+    setError: couponSetError,
+    reset: couponReset,
+  } = useForm<CoupomFormValue>({
+    resolver: yupResolver(CouponSchema),
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,7 +89,7 @@ const PayCartPage = () => {
       return;
     }
 
-    //edit
+    // edit
     if (card && percentage) {
       const newCards = selectedCards?.map((item) => {
         if (item.id === id) {
@@ -79,7 +110,7 @@ const PayCartPage = () => {
       ...selectedCards,
       {
         id,
-        percentage: percentage,
+        percentage,
       },
     ]);
     console.log("selectedCards", selectedCards);
@@ -108,7 +139,7 @@ const PayCartPage = () => {
     console.log(selectedCards);
   };
 
-  const getPercentageValue = (percentage: number = 0) => {
+  const getPercentageValue = (percentage = 0) => {
     console.log("getPercentageValue", percentage, data?.total_price);
     return (data?.total_price * percentage) / 100;
   };
@@ -199,6 +230,32 @@ const PayCartPage = () => {
     window.location.reload();
   };
 
+  const handleAddCoupom = couponHandleSubmit(async (value: CoupomFormValue) => {
+    try {
+      const { data: resData } = await api.get<ICoupon>(
+        `/coupon/${value.coupon}`
+      );
+      if (!coupons.find((item) => item.id === resData.id)) {
+        setCoupons((prev) => [...prev, resData]);
+      }
+      couponReset({
+        coupon: "",
+      });
+    } catch (error) {
+      couponSetError("coupon", {
+        message: "Cupom inválido",
+        type: "value",
+      });
+    }
+  });
+  const handleRemoveCoupon = (id: string) => {
+    setCoupons((prev) => prev.filter((o) => o.id !== id));
+  };
+
+  const discountedTotalPrice =
+    (data?.total_price || 0) -
+    coupons.reduce((prev, coupon) => prev + coupon.discount, 0);
+
   const PayCart = async () => {
     try {
       console.log("selectedAddress", selectedAddress, !selectedCards);
@@ -217,12 +274,13 @@ const PayCartPage = () => {
       const postObject = {
         address_id: address.data.id,
         payment_cards,
+        coupons: coupons.map((o) => o.id),
       };
 
       console.log("postObject", postObject);
 
       const result = await api.post(
-        "/cart/pay/" + currentCart.data.id,
+        `/cart/pay/${currentCart.data.id}`,
         postObject
       );
       handleSuccess("Compra realizada com sucesso");
@@ -305,6 +363,8 @@ const PayCartPage = () => {
                 };
               })}
             />
+          </div>
+          <div>
             <h1>Selecione os Cartões</h1>
             <GenericList
               column_names={[
@@ -340,18 +400,43 @@ const PayCartPage = () => {
                         addCard(item.id, percentage);
                       }}
                     />,
-                    getPercentageValue(item.percentage),
+                    formatCurrency(getPercentageValue(item.percentage)),
                   ],
                 };
               })}
             />
           </div>
+          <CouponSection>
+            <h1>Cupons</h1>
+            <InputWrapper onSubmit={handleAddCoupom}>
+              <InputTextFloat
+                label="Inserir cupom"
+                {...couponRegister("coupon")}
+                error={couponErrors.coupon?.message}
+              />
+              <Button>Adicionar</Button>
+            </InputWrapper>
+            {coupons.length > 0 && (
+              <Coupons>
+                <CoupomHead>Código</CoupomHead>
+                <CoupomHead>Valor aplicado</CoupomHead>
+                <CoupomHead />
+                {coupons.map((item) => (
+                  <>
+                    <CoupomCell>{item.code}</CoupomCell>
+                    <CoupomCell>{formatCurrency(-item.discount)}</CoupomCell>
+                    <ButtonIcon onClick={() => handleRemoveCoupon(item.id)}>
+                      <BsTrashFill />
+                    </ButtonIcon>
+                  </>
+                ))}
+              </Coupons>
+            )}
+          </CouponSection>
         </SideDiv>
-        <GenericListCell>Total: {data?.total_price}</GenericListCell>
-        <div>
-          cupons
-          <input type="text" />
-        </div>
+        <GenericListCell>
+          Total: {formatCurrency(discountedTotalPrice)}
+        </GenericListCell>
         <ButtonComponent onClick={() => PayCart()}>Pagar</ButtonComponent>
       </Container>
     </Layout>

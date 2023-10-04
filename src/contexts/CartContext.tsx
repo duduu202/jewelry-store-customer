@@ -7,6 +7,7 @@ import api from "../services/api";
 interface CartContextData {
   cart: ICart | undefined;
   addProduct: (productId: string) => Promise<void>;
+  changeProductQuantity: (productId: string, quantity: number) => Promise<void>;
   removeProduct: (productId: string) => Promise<void>;
 }
 
@@ -39,6 +40,25 @@ const CartProvider = ({ children }: PropsWithChildren) => {
       handleError(error);
     }
   };
+  const changeProductQuantity = async (productId: string, quantity: number) => {
+    if (!cart) return;
+    try {
+      await api.put(`/cart/${cart.id}`, {
+        items: [
+          ...cart.cart_items.map((item) => {
+            return {
+              product_id: item.product.id,
+              quantity:
+                item.product.id === productId ? quantity : item.quantity,
+            };
+          }),
+        ],
+      });
+      refetchCart();
+    } catch (error) {
+      handleError(error);
+    }
+  };
   const removeProduct = async (productId: string) => {
     if (!cart) return;
     const items = cart.cart_items.filter((item) => {
@@ -59,6 +79,7 @@ const CartProvider = ({ children }: PropsWithChildren) => {
       cart,
       addProduct,
       removeProduct,
+      changeProductQuantity,
     }),
     [cart]
   );

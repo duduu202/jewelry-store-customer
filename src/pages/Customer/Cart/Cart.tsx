@@ -14,10 +14,15 @@ import useQueryList from "../../../services/queryList";
 import useQueryGet from "../../../services/queryGet";
 import GenericList from "../../../components/GenericList/GenericList";
 import { GenericListCell } from "../../../components/GenericList/styles";
+import { useCart } from "../../../contexts/CartContext";
+import { formatCurrency } from "../../../utils/formatCurrency";
 
 const route = "/cart";
 const CartPage = () => {
   const navigate = useNavigate();
+
+  const { cart, changeProductQuantity, removeProduct } = useCart();
+
   const { data, isFetching } = useQueryGet<ICartDTO>({
     queryKey: ["cart"],
     url: "/cart/current_cart",
@@ -123,23 +128,29 @@ const CartPage = () => {
             /> */}
           <GenericList
             column_names={["name", "price", "quantity", "ações"]}
-            data={data?.cart_items?.map((item) => {
+            data={cart?.cart_items?.map((item) => {
               return {
                 id: item.id,
                 items: [
                   item.product.name,
-                  item.product.price * item.quantity,
+                  formatCurrency(item.product.price * item.quantity),
                   item.quantity,
                   <div>
-                    <ButtonComponent onClick={() => handleAddItem(item.id)}>
+                    <ButtonComponent
+                      onClick={() =>
+                        changeProductQuantity(item.id, item.quantity + 1)
+                      }
+                    >
                       +1
                     </ButtonComponent>
                     <ButtonComponent
-                      onClick={() => handleRemoveOneItem(item.id)}
+                      onClick={() =>
+                        changeProductQuantity(item.id, item.quantity - 1)
+                      }
                     >
                       -1
                     </ButtonComponent>
-                    <ButtonComponent onClick={() => handleRemoveItem(item.id)}>
+                    <ButtonComponent onClick={() => removeProduct(item.id)}>
                       Remover
                     </ButtonComponent>
                   </div>,
@@ -147,7 +158,9 @@ const CartPage = () => {
               };
             })}
           />
-          <GenericListCell>Total: {data?.total_price}</GenericListCell>
+          <GenericListCell>
+            Total: {formatCurrency(data?.total_price)}
+          </GenericListCell>
           <ButtonComponent onClick={() => navigate("/cart/pay")}>
             Finalizar Compra
           </ButtonComponent>
