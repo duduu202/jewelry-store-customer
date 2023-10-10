@@ -21,20 +21,40 @@ const CartProvider = ({ children }: PropsWithChildren) => {
   const addProduct = async (productId: string) => {
     if (!cart) return;
     try {
-      await api.put(`/cart/${cart.id}`, {
-        items: [
-          ...cart.cart_items.map((item) => {
-            return {
-              product_id: item.product.id,
-              quantity: item.quantity,
-            };
-          }),
-          {
-            product_id: productId,
-            quantity: 1,
-          },
-        ],
-      });
+      const alreadyExists = cart.cart_items.find(
+        (item) => item.product.id === productId
+      );
+      if (alreadyExists) {
+        await api.put(`/cart/${cart.id}`, {
+          items: [
+            ...cart.cart_items.map((item) => {
+              return {
+                product_id: item.product.id,
+                quantity:
+                  item.product.id === productId
+                    ? item.quantity + 1
+                    : item.quantity,
+              };
+            }),
+          ],
+        });
+      } else {
+        await api.put(`/cart/${cart.id}`, {
+          items: [
+            ...(cart?.cart_items || []).map((item) => {
+              return {
+                product_id: item.product.id,
+                quantity: item.quantity,
+              };
+            }),
+            {
+              product_id: productId,
+              quantity: 1,
+            },
+          ],
+        });
+      }
+
       refetchCart();
     } catch (error) {
       handleError(error);

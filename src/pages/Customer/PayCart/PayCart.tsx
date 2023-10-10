@@ -286,7 +286,7 @@ const PayCartPage = () => {
       const postObject = {
         address_id: address.data.id,
         payment_cards,
-        coupons: coupons.map((o) => o.id),
+        coupon_codes: coupons.map((o) => o.id),
       };
 
       console.log("postObject", postObject);

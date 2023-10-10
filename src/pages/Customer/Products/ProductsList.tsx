@@ -109,7 +109,12 @@ const ProductsListPage = () => {
               <p>Preço: {product.price}</p>
               <p>Estoque: {product.stock_available}</p>
               {/* Adicione mais informações conforme necessário */}
-              <ButtonComponent onClick={() => addProduct(product.id)}>
+              <ButtonComponent
+                onClick={async () => {
+                  await addProduct(product.id);
+                  refetch();
+                }}
+              >
                 Comprar
               </ButtonComponent>
               {/* <button onClick={() => handleDelete(product.id)}>Excluir</button> */}
