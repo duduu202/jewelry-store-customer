@@ -21,7 +21,7 @@ const route = "/cart";
 const CartPage = () => {
   const navigate = useNavigate();
 
-  const { cart, changeProductQuantity, removeProduct } = useCart();
+  const { cart, changeProductQuantity, removeProduct, refetchCart } = useCart();
 
   const { data, isFetching } = useQueryGet<ICartDTO>({
     queryKey: ["cart"],

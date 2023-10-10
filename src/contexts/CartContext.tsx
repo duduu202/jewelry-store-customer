@@ -9,6 +9,7 @@ interface CartContextData {
   addProduct: (productId: string) => Promise<void>;
   changeProductQuantity: (productId: string, quantity: number) => Promise<void>;
   removeProduct: (productId: string) => Promise<void>;
+  refetchCart: () => void;
 }
 
 const cartContext = createContext<CartContextData>({} as CartContextData);
@@ -21,9 +22,9 @@ const CartProvider = ({ children }: PropsWithChildren) => {
   const addProduct = async (productId: string) => {
     if (!cart) return;
     try {
-      const alreadyExists = cart.cart_items.find(
-        (item) => item.product.id === productId
-      );
+      const alreadyExists = cart?.cart_items
+        ? cart?.cart_items.some((item) => item.product.id === productId)
+        : false;
       if (alreadyExists) {
         await api.put(`/cart/${cart.id}`, {
           items: [
@@ -68,8 +69,7 @@ const CartProvider = ({ children }: PropsWithChildren) => {
           ...cart.cart_items.map((item) => {
             return {
               product_id: item.product.id,
-              quantity:
-                item.product.id === productId ? quantity : item.quantity,
+              quantity: item.id === productId ? quantity : item.quantity,
             };
           }),
         ],
@@ -84,14 +84,19 @@ const CartProvider = ({ children }: PropsWithChildren) => {
     const items = cart.cart_items.filter((item) => {
       return item.id !== productId && item.quantity > 0;
     });
-    await api.put(`/cart/${cart.id}`, {
-      items: items.map((item) => {
-        return {
-          product_id: item.product.id,
-          quantity: item.quantity,
-        };
-      }),
-    });
+    try {
+      await api.put(`/cart/${cart.id}`, {
+        items: items.map((item) => {
+          return {
+            product_id: item.product.id,
+            quantity: item.quantity,
+          };
+        }),
+      });
+    } catch (error) {
+      handleError(error);
+    }
+
     refetchCart();
   };
   const memo = useMemo(
@@ -100,6 +105,7 @@ const CartProvider = ({ children }: PropsWithChildren) => {
       addProduct,
       removeProduct,
       changeProductQuantity,
+      refetchCart,
     }),
     [cart]
   );
