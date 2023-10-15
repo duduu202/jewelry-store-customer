@@ -127,7 +127,7 @@ const CartsListPage = () => {
                       item.cart_items
                         ?.map((itm) => itm.product.name)
                         .join(", ") || "",
-                      item.is_current ? "Carrinho Atual" : item.status,
+                      item.is_current ? "Carrinho Atual" : item?.status || "",
                       item.total_price,
                       isIsoDate(item.updated_at)
                         ? new Date(item.updated_at).toLocaleDateString()
