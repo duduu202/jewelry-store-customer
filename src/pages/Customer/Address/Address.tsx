@@ -88,13 +88,13 @@ const AddressListPage = () => {
   return (
     <Layout>
       <Container>
-        <h1>Cartões</h1>
+        <h1>Endereços</h1>
         <ListEditor
           route={route}
           objectKeys={{
             street: "Rua",
             number: "Número",
-            district: "Bairoo",
+            district: "Bairro",
             city: "Cidade",
             state: "Estado",
             zip_code: "CEP",

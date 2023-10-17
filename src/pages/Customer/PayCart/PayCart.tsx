@@ -14,8 +14,12 @@ import { ButtonComponent } from "../../../components/Button/styles";
 import Layout from "../../../components/Layout/Layout";
 import GenericList from "../../../components/GenericList/GenericList";
 import ListEditor from "../../../components/GenericEditor/ListEditor";
-import { GenericListCell } from "../../../components/GenericList/styles";
 import {
+  GenericListCell,
+  GenericListCell2,
+} from "../../../components/GenericList/styles";
+import {
+  BasicCells,
   Button,
   ButtonIcon,
   CoupomCell,
@@ -30,6 +34,7 @@ import { formatCurrency } from "../../../utils/formatCurrency";
 import InputTextFloat from "../../../components/InputTextFloat/InputTextFloat";
 import { ICoupon } from "../../../Interfaces/coupon";
 import CouponSchema from "../../../validations/Coupon.validation";
+import { useCart } from "../../../contexts/CartContext";
 
 const route = "/cart";
 type CoupomFormValue = {
@@ -45,6 +50,7 @@ const PayCartPage = () => {
   const [selectedCards, setSelectedCards] = useState<any[]>([]);
   const [coupomInput, setCoupomInput] = useState<string>("");
   const [coupons, setCoupons] = useState<ICoupon[]>([]);
+  const { refetchCart } = useCart();
 
   const {
     register: couponRegister,
@@ -237,9 +243,9 @@ const PayCartPage = () => {
       );
       console.log(resData);
 
-      if (coupons.find((item) => item.id === resData.id)) {
-        return;
-      }
+      // if (coupons.find((item) => item.id === resData.id)) {
+      //  return;
+      // }
       console.log(resData.quantity);
 
       if (resData.quantity <= 0) {
@@ -267,6 +273,10 @@ const PayCartPage = () => {
   const discountedTotalPrice =
     (data?.total_price || 0) -
     coupons.reduce((prev, coupon) => prev + coupon.discount, 0);
+
+  const delivery_fee = data?.delivery_fee || 0;
+
+  const products_price = data?.products_price || 0;
 
   const PayCart = async () => {
     try {
@@ -296,6 +306,8 @@ const PayCartPage = () => {
         postObject
       );
       handleSuccess("Compra realizada com sucesso");
+      navigate("/cartRequests");
+      refetchCart();
     } catch (error) {
       handleError(error);
     }
@@ -446,9 +458,33 @@ const PayCartPage = () => {
             )}
           </CouponSection>
         </SideDiv>
-        <GenericListCell>
-          Total: {formatCurrency(discountedTotalPrice)}
-        </GenericListCell>
+        <BasicCells>
+          <GenericListCell>
+            Valor dos produtos: +{formatCurrency(products_price)}
+          </GenericListCell>
+          <GenericListCell>
+            Frete: +{formatCurrency(delivery_fee)}
+          </GenericListCell>
+          <GenericListCell>
+            {discountedTotalPrice < 0 ? (
+              <div>
+                <span style={{ color: "red" }}>
+                  Total: {formatCurrency(discountedTotalPrice)}
+                </span>
+              </div>
+            ) : (
+              <div>Total: {formatCurrency(discountedTotalPrice)}</div>
+            )}
+          </GenericListCell>
+          {discountedTotalPrice < 0 && (
+            <GenericListCell>
+              <span style={{ color: "red" }}>
+                Observação: Um cupom sera gerado com o valor restante
+              </span>
+            </GenericListCell>
+          )}
+        </BasicCells>
+
         <ButtonComponent onClick={() => PayCart()}>Pagar</ButtonComponent>
       </Container>
     </Layout>

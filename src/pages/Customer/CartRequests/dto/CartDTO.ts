@@ -29,3 +29,8 @@ export interface ICartDTO {
   discount: number;
   total_price: number;
 }
+
+export interface ICartExchangeDTO {
+  cart_id: string;
+  cart_items: Partial<ICartItemDTO>[];
+}

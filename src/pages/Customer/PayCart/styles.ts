@@ -11,6 +11,20 @@ export const SideDiv = styled.div`
   flex-direction: column;
   gap: 1rem;
 `;
+
+export const BasicCells = styled.div`
+  // um em cima do outro
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+export const SideToSideDiv = styled.div`
+  width: 50%;
+  float: left;
+  padding: 20px;
+`;
+
 export const CouponSection = styled.section`
   width: fit-content;
   margin-bottom: 1rem;

@@ -12,6 +12,7 @@ export const GenericListCell = styled.td`
   border: 1px solid #ddd;
   border-radius: 5px;
   padding: 8px;
+  width: fit-content;
 `;
 
 export const GenericSelectedCell = styled.td`

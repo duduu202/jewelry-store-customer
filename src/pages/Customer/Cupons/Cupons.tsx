@@ -88,7 +88,7 @@ const CuponsListPage = () => {
   return (
     <Layout>
       <Container>
-        <h1>Cartões</h1>
+        <h1>Cupons</h1>
         <ListEditor
           route={route}
           objectKeys={{

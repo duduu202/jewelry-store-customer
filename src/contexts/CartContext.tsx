@@ -11,6 +11,15 @@ interface CartContextData {
   removeProduct: (productId: string) => Promise<void>;
   refetchCart: () => void;
 }
+export enum Cart_status {
+  EM_PROCESSAMENTO = "EM_PROCESSAMENTO",
+  EM_TRANSITO = "EM_TRANSITO",
+  ENTREGUE = "ENTREGUE",
+  EM_TROCA = "EM_TROCA",
+  TROCA_AUTORIZADA = "TROCA_AUTORIZADA",
+  REPROVADA = "REPROVADA",
+  APROVADA = "APROVADA",
+}
 
 const cartContext = createContext<CartContextData>({} as CartContextData);
 

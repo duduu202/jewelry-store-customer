@@ -11,12 +11,13 @@ import UserListPage from "../pages/Customer/User/UserList";
 import UserEditPage from "../pages/Customer/User/UserEditor";
 import UserCreatePage from "../pages/Customer/User/UserCreate";
 import ProductsListPage from "../pages/Customer/Products/ProductsList";
-import CartsListPage from "../pages/Customer/CartRequests/CartsList";
 import CartPage from "../pages/Customer/Cart/Cart";
 import CardListPage from "../pages/Customer/Card/Card";
 import AddressListPage from "../pages/Customer/Address/Address";
 import CuponsListPage from "../pages/Customer/Cupons/Cupons";
 import PayCartPage from "../pages/Customer/PayCart/PayCart";
+import CartsListPage from "../pages/Customer/CartRequests/CartsList";
+import ExchangeItemsCartPage from "../pages/Customer/CartRequests/ExchangeItemsCart";
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -39,6 +40,10 @@ const AppRoutes = () => {
           <Route path="/user" element={<UserListPage />} />
           <Route path="/product" element={<ProductsListPage />} />
           <Route path="/cartRequests" element={<CartsListPage />} />
+          <Route
+            path="/cartRequests/exchange/:id"
+            element={<ExchangeItemsCartPage />}
+          />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/payment_card" element={<CardListPage />} />
           <Route path="/address" element={<AddressListPage />} />

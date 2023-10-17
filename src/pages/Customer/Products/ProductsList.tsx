@@ -31,7 +31,7 @@ const ProductsListPage = () => {
   // const {} = useQueryList<IProductDTO>({
   //   url: "/product",
   // });
-  const { addProduct } = useCart();
+  const { addProduct, refetchCart } = useCart();
   const { data, ref, refetch, isLoading } = useQueryInfinite<IProductDTO>({
     queryKey: ["product"],
     url: "/product",
@@ -113,6 +113,7 @@ const ProductsListPage = () => {
                 onClick={async () => {
                   await addProduct(product.id);
                   refetch();
+                  refetchCart();
                 }}
               >
                 Comprar
