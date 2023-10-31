@@ -65,7 +65,7 @@ const Login = () => {
             error={errors.password?.message?.toString()}
           />
 
-          <ButtonSubmit type="submit" disabled={isSubmitting}>
+          <ButtonSubmit id="login" type="submit" disabled={isSubmitting}>
             Login
           </ButtonSubmit>
         </Form>
