@@ -17,6 +17,7 @@ import ProductEditor from "./ProductEditor";
 import ListPage from "../../../components/GenericEditor/ListEditor";
 import ListEditor from "../../../components/GenericEditor/ListEditor";
 import Layout from "../../../components/Layout/Layout";
+import { PageTitle } from "../../../components/Layout/styles";
 
 const route = "/address";
 
@@ -88,7 +89,7 @@ const AddressListPage = () => {
   return (
     <Layout>
       <Container>
-        <h1>Endereços</h1>
+        <PageTitle>Endereços</PageTitle>
         <ListEditor
           route={route}
           objectKeys={{

@@ -8,3 +8,10 @@ export const PageContainer = styled.div`
 export const ChildrenContainer = styled.div`
   padding: 1rem 2rem;
 `;
+
+export const PageTitle = styled.h2`
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: ${(props) => props.theme.colors.dark_font};
+  margin-bottom: 1rem;
+`;

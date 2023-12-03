@@ -17,6 +17,7 @@ import ProductEditor from "./ProductEditor";
 import ListPage from "../../../components/GenericEditor/ListEditor";
 import ListEditor from "../../../components/GenericEditor/ListEditor";
 import Layout from "../../../components/Layout/Layout";
+import { PageTitle } from "../../../components/Layout/styles";
 
 const route = "/coupon";
 
@@ -88,7 +89,7 @@ const CuponsListPage = () => {
   return (
     <Layout>
       <Container>
-        <h1>Cupons</h1>
+        <PageTitle>Cupons</PageTitle>
         <ListEditor
           route={route}
           objectKeys={{

@@ -16,6 +16,7 @@ import GenericList from "../../../components/GenericList/GenericList";
 import { GenericListCell } from "../../../components/GenericList/styles";
 import { useCart } from "../../../contexts/CartContext";
 import { formatCurrency } from "../../../utils/formatCurrency";
+import { PageTitle } from "../../../components/Layout/styles";
 
 const route = "/cart";
 const CartPage = () => {
@@ -114,7 +115,7 @@ const CartPage = () => {
   };
   return (
     <Layout>
-      <h1>Carrinho</h1>
+      <PageTitle>Carrinho</PageTitle>
       <Container>
         <div>
           {/* <GenericList

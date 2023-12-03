@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
@@ -15,6 +16,7 @@ import isIsoDate from "../../utils/checkIsoDate";
 
 interface IProps {
   route: string;
+  preloadedData?: any[];
   /**
    * Object keys to be displayed on the editor
    *
@@ -30,27 +32,36 @@ interface IProps {
     [key: string]: string;
   };
 
-  actions?: [
-    {
-      name: string;
-      onClick: (obj: any) => void;
-    }
-  ];
+  actions: {
+    name: string;
+    onClick: (obj: any) => void;
+  }[];
+  onSave?: (obj: any) => void;
 
   disableActions?: boolean;
   disableCreate?: boolean;
 }
 
-const ListEditor = (props: IProps) => {
+const ListEditor = ({ actions = [], ...props }: IProps) => {
   // const { data } = await api.get('/object');
   const { route } = props;
+  let { preloadedData } = props;
+  if (props.disableActions) {
+    actions = [];
+  }
 
-  const [data, setData] = useState<any[]>();
+  const [data, setData] = useState<any[]>(preloadedData || []);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
+      if (preloadedData) {
+        setData(preloadedData);
+        setLoading(false);
+        setIsOpenModal(false);
+        return;
+      }
       const { data } = await api.get<IPaginatedResponse<any>>(route);
       console.log("data", data.results);
       setData(data.results);
@@ -63,6 +74,7 @@ const ListEditor = (props: IProps) => {
   const handleDelete = async (id: string) => {
     await api.delete(`${route}/${id}`);
     const { data } = await api.get(route);
+    preloadedData = data.results;
     setData(data.results);
   };
 
@@ -89,8 +101,12 @@ const ListEditor = (props: IProps) => {
     }
 
     const { data } = await api.get(route);
+    preloadedData = data.results;
     setData(data.results);
     setIsOpenModal(false);
+    if (props.onSave) {
+      props.onSave(object);
+    }
   };
 
   const [editingUserId, setEditingUserId] = useState<string | undefined>(
@@ -126,6 +142,7 @@ const ListEditor = (props: IProps) => {
             data={data?.map((item) => {
               return {
                 id: item.id,
+                highlight: item.highlight,
                 // items: [item.name, item.stock, item.image ? <img src={item.image} alt="imagem" width="100px" height="100px"/> : <></>, item.price ? item.price : <></>,
                 items: Object.keys(props.objectKeys)
                   .map((key) => {
@@ -151,8 +168,8 @@ const ListEditor = (props: IProps) => {
                     props.disableActions
                       ? []
                       : [
-                          props.actions ? (
-                            props.actions.map((action) => {
+                          actions
+                            .map((action) => {
                               return (
                                 <ButtonComponent
                                   onClick={() => action.onClick(item)}
@@ -161,20 +178,18 @@ const ListEditor = (props: IProps) => {
                                 </ButtonComponent>
                               );
                             })
-                          ) : (
-                            <div>
+                            .concat(
                               <ButtonComponent
                                 onClick={() => handleDelete(item.id)}
                               >
                                 Excluir
-                              </ButtonComponent>
+                              </ButtonComponent>,
                               <ButtonComponent
                                 onClick={() => handleEdit(item.id)}
                               >
                                 Editar
                               </ButtonComponent>
-                            </div>
-                          ),
+                            ),
                         ]
                   ),
               };

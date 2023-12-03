@@ -8,6 +8,8 @@ import { ICartDTO } from "./dto/CartDTO";
 import isIsoDate from "../../../utils/checkIsoDate";
 import Layout from "../../../components/Layout/Layout";
 import { Cart_status } from "../../../contexts/CartContext";
+import { PageTitle } from "../../../components/Layout/styles";
+import { formatCurrency } from "../../../utils/formatCurrency";
 
 const route = "/cart";
 
@@ -30,7 +32,7 @@ const CartsListPage = () => {
   return (
     <Layout>
       <Container>
-        <h1>Pedidos</h1>
+        <PageTitle>Pedidos</PageTitle>
         <div>
           {loading ? (
             <p>Carregando...</p>
@@ -52,11 +54,11 @@ const CartsListPage = () => {
                         ?.map((itm) => itm.product.name)
                         .join(", ") || "",
                       item.is_current ? "Carrinho Atual" : item?.status || "",
-                      item.total_price,
+                      formatCurrency(item.total_price),
                       isIsoDate(item.updated_at)
                         ? new Date(item.updated_at).toLocaleDateString()
                         : "",
-                      item.status == Cart_status.ENTREGUE ? (
+                      item.status === Cart_status.ENTREGUE ? (
                         <button
                           type="button"
                           onClick={() => {

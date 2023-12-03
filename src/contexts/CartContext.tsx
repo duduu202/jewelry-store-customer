@@ -29,12 +29,14 @@ const CartProvider = ({ children }: PropsWithChildren) => {
     url: "/cart/current_cart",
   });
   const addProduct = async (productId: string) => {
+    console.log("productId", productId);
     if (!cart) return;
     try {
       const alreadyExists = cart?.cart_items
         ? cart?.cart_items.some((item) => item.product.id === productId)
         : false;
       if (alreadyExists) {
+        console.log("cart", cart);
         await api.put(`/cart/${cart.id}`, {
           items: [
             ...cart.cart_items.map((item) => {

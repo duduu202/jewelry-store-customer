@@ -35,19 +35,25 @@ import InputTextFloat from "../../../components/InputTextFloat/InputTextFloat";
 import { ICoupon } from "../../../Interfaces/coupon";
 import CouponSchema from "../../../validations/Coupon.validation";
 import { useCart } from "../../../contexts/CartContext";
+import { PageTitle } from "../../../components/Layout/styles";
+import { Address } from "../../../hooks/useAuth";
 
-const route = "/cart";
+const routeCart = "/cart";
+const routeAddress = "/address";
+const routePaymentCard = "/payment_card";
 type CoupomFormValue = {
   coupon: string;
 };
 const PayCartPage = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<ICartDTO>();
-  const [loading, setLoading] = useState(true);
-  const [address, setAddress] = useState<any>();
-  const [cards, setCards] = useState<any>();
-  const [selectedAddress, setSelectedAddress] = useState<any>();
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [cards, setCards] = useState<any[]>();
+
+  const [selectedAddress, setSelectedAddress] = useState<Address | undefined>();
+  const [chargeAddress, setChargeAddress] = useState<Address | undefined>();
   const [selectedCards, setSelectedCards] = useState<any[]>([]);
+  const [chargeAddressIsSame, setChargeAddressIsSame] = useState<boolean>(true);
   const [coupomInput, setCoupomInput] = useState<string>("");
   const [coupons, setCoupons] = useState<ICoupon[]>([]);
   const { refetchCart } = useCart();
@@ -62,30 +68,47 @@ const PayCartPage = () => {
     resolver: yupResolver(CouponSchema),
   });
 
+  const setAddressAndHighlight = (item: Address) => {
+    if (selectedAddress) {
+      console.log("selectedAddress", selectedAddress);
+      Object.assign(selectedAddress, { highlight: false });
+    }
+    Object.assign(item, { highlight: true });
+    setSelectedAddress(item);
+    return item;
+  };
+
+  const setChargeAddressAndHighlight = (item: Address) => {
+    if (chargeAddress) {
+      Object.assign(chargeAddress, { highlight: false });
+    }
+    Object.assign(item, { highlight: true });
+    setChargeAddress(item);
+    return item;
+  };
+
   useEffect(() => {
     const fetchData = async () => {
-      const { data } = await api.get<IPaginatedResponse<any>>("/address");
-      console.log("data", data.results);
-      setAddress(data.results);
+      const { data: fetch } = await api.get<IPaginatedResponse<Address>>(
+        routeAddress
+      );
+      setAddresses(fetch.results);
     };
     fetchData();
   }, []);
 
   useEffect(() => {
     const fetchData = async () => {
-      const { data } = await api.get<IPaginatedResponse<any>>("/payment_card");
-      console.log("data", data.results);
-      setCards(data.results);
+      const { data: fetch } = await api.get<IPaginatedResponse<any>>(
+        routePaymentCard
+      );
+      setCards(fetch.results);
     };
     fetchData();
   }, []);
 
   const addCard = (id: string, percentage?: number) => {
-    // verify if card exists in selectedCards
-    console.log("addCard", id, percentage);
-
     const card = selectedCards.find((item) => item.id === id);
-
     // remove
     if (card && !percentage) {
       const newCards = selectedCards?.filter((item) => item.id !== id);
@@ -107,7 +130,6 @@ const PayCartPage = () => {
         return item;
       });
       setSelectedCards(newCards);
-      console.log("selectedCards", selectedCards);
       return;
     }
 
@@ -120,29 +142,6 @@ const PayCartPage = () => {
       },
     ]);
     console.log("selectedCards", selectedCards);
-  };
-
-  const setPercentagePerCard = (id: string, percentage: number) => {
-    console.log("setPercentagePerCard");
-
-    // verify if card exists in selectedCards
-    // if not, add it
-
-    // if exists, update percentage
-
-    const card = cards?.find((item) => item.id === id);
-
-    if (!card) {
-      const card = {
-        id,
-        percentage,
-      };
-
-      setCards([...cards, card]);
-    } else {
-      card.percentage = percentage;
-    }
-    console.log(selectedCards);
   };
 
   const getPercentageValue = (percentage = 0) => {
@@ -285,7 +284,6 @@ const PayCartPage = () => {
         throw new Error("Selecione um endereço");
       }
       const currentCart = await api.get<any>("/cart/current_cart");
-      const address = await api.get<any>(`/address/${selectedAddress}`);
       const payment_cards = selectedCards?.map((item) => {
         return {
           payment_card_id: item.id,
@@ -294,7 +292,7 @@ const PayCartPage = () => {
       });
 
       const postObject = {
-        address_id: address.data.id,
+        address_id: selectedAddress.id,
         payment_cards,
         coupon_codes: coupons.map((o) => o.id),
       };
@@ -327,7 +325,7 @@ const PayCartPage = () => {
       <Container>
         <SideDiv>
           <div>
-            <h1>Carrinho</h1>
+            <PageTitle>Carrinho</PageTitle>
             <GenericList
               column_names={["name", "preço", "quantidade", "ações"]}
               data={data?.cart_items?.map((item) => {
@@ -358,38 +356,75 @@ const PayCartPage = () => {
             />
           </div>
           <div>
-            <h1>Selecione o Endereço</h1>
-            <GenericList
-              column_names={[
-                "rua",
-                "numero",
-                "cidade",
-                "estado",
-                "cep",
-                "Ações",
+            <PageTitle>Selecione um endereço de entrega</PageTitle>
+            <ListEditor
+              route={routeAddress}
+              preloadedData={addresses}
+              actions={[
+                {
+                  name: "Selecionar",
+                  onClick: (obj) => {
+                    setAddressAndHighlight(obj);
+                  },
+                },
               ]}
-              data={address?.map((item) => {
-                return {
-                  id: item.id,
-                  highlight: item.id === selectedAddress,
-                  items: [
-                    item.street,
-                    item.number,
-                    item.city,
-                    item.state,
-                    item.zip_code,
-                    <ButtonComponent
-                      onClick={() => setSelectedAddress(item.id)}
-                    >
-                      Selecionar
-                    </ButtonComponent>,
-                  ],
-                };
-              })}
+              disableActions={false}
+              objectKeys={{
+                street: "Rua",
+                number: "Número",
+                district: "Bairro",
+                city: "Cidade",
+                state: "Estado",
+                zip_code: "CEP",
+              }}
             />
+            {/* 
+              Ratio: O endereço de entrega é o mesmo do endereço de cobrança?
+            */}
+            <div>
+              <input
+                type="checkbox"
+                defaultChecked
+                onChange={() => {
+                  setChargeAddressIsSame(!chargeAddressIsSame);
+                  if (chargeAddressIsSame) {
+                    setChargeAddress(selectedAddress);
+                  } else {
+                    setChargeAddress(undefined);
+                  }
+                }}
+              />
+              <span>Endereço de cobrança é o mesmo de entrega</span>
+            </div>
+            {!chargeAddressIsSame && (
+              <>
+                <PageTitle>Selecione um endereço de cobrança</PageTitle>
+                <ListEditor
+                  route={routeAddress}
+                  preloadedData={addresses}
+                  actions={[
+                    {
+                      name: "Selecionar",
+                      onClick: (obj) => {
+                        setChargeAddressAndHighlight(obj);
+                      },
+                    },
+                  ]}
+                  disableActions={false}
+                  objectKeys={{
+                    street: "Rua",
+                    number: "Número",
+                    district: "Bairro",
+                    city: "Cidade",
+                    state: "Estado",
+                    zip_code: "CEP",
+                  }}
+                />
+              </>
+            )}
           </div>
           <div>
-            <h1>Selecione os Cartões</h1>
+            <PageTitle>Selecione os Cartões</PageTitle>
             <GenericList
               column_names={[
                 "Primeiros 4 digitos",

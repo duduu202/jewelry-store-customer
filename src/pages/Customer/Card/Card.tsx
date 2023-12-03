@@ -17,6 +17,7 @@ import ProductEditor from "./ProductEditor";
 import ListPage from "../../../components/GenericEditor/ListEditor";
 import ListEditor from "../../../components/GenericEditor/ListEditor";
 import Layout from "../../../components/Layout/Layout";
+import { PageTitle } from "../../../components/Layout/styles";
 
 const route = "/payment_card";
 
@@ -88,7 +89,7 @@ const CardListPage = () => {
   return (
     <Layout>
       <Container>
-        <h1>Cartões</h1>
+        <PageTitle>Cartões</PageTitle>
         <ListEditor
           route={route}
           objectKeys={{

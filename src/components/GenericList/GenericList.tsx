@@ -17,7 +17,7 @@ interface IData {
   items: any[];
   highlight?: boolean;
 }
-function GenericList({ column_names, data }: Props) {
+const GenericList = ({ column_names, data }: Props) => {
   return (
     <div>
       <GenericListTable>
@@ -29,8 +29,8 @@ function GenericList({ column_names, data }: Props) {
           </tr>
         </thead>
         <tbody>
-          {data?.map((line) => (
-            <GenericListRow key={line.id}>
+          {data?.map((line, index) => (
+            <GenericListRow id={String(index)} key={line.id}>
               {line.highlight
                 ? line.items.map((item) => (
                     <GenericSelectedCell>{item}</GenericSelectedCell>
@@ -44,6 +44,6 @@ function GenericList({ column_names, data }: Props) {
       </GenericListTable>
     </div>
   );
-}
+};
 
 export default GenericList;

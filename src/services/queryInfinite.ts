@@ -13,13 +13,14 @@ import { IPaginatedResponse } from "../Interfaces/IPaginatedResponse";
 interface Props extends UseInfiniteQueryOptions {
   url: string;
   limit?: number;
+  search?: string;
 }
-const useQueryInfinite = <T>({ url, limit = 10, ...rest }: Props) => {
+const useQueryInfinite = <T>({ url, limit = 10, search, ...rest }: Props) => {
   const query = useInfiniteQuery({
     ...rest,
     queryFn: async ({ pageParam }): Promise<IPaginatedResponse<T>> => {
       const { data } = await api.get<IPaginatedResponse<T>>(url, {
-        params: { page: pageParam, limit },
+        params: { page: pageParam, limit, search },
       });
       return data;
     },
