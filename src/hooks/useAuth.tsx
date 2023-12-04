@@ -18,6 +18,18 @@ export interface Address {
   updated_at?: string;
 }
 
+export interface IPaymentCard {
+  user_id: string;
+  id: string;
+  external_id: string;
+  first_four_digits: string;
+  last_four_digits: string;
+  brand: string;
+  holder_name: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
 export interface User {
   id: string;
   phone: string;

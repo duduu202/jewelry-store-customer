@@ -36,7 +36,10 @@ import { ICoupon } from "../../../Interfaces/coupon";
 import CouponSchema from "../../../validations/Coupon.validation";
 import { useCart } from "../../../contexts/CartContext";
 import { PageTitle } from "../../../components/Layout/styles";
-import { Address } from "../../../hooks/useAuth";
+import { Address, IPaymentCard } from "../../../hooks/useAuth";
+import { Modal } from "../../../components/Modal/Modal";
+import { ModalContent } from "../../../components/Modal/styles";
+import Editor from "../../../components/GenericEditor/Editor";
 
 const routeCart = "/cart";
 const routeAddress = "/address";
@@ -57,6 +60,7 @@ const PayCartPage = () => {
   const [coupomInput, setCoupomInput] = useState<string>("");
   const [coupons, setCoupons] = useState<ICoupon[]>([]);
   const { refetchCart } = useCart();
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
   const {
     register: couponRegister,
@@ -323,6 +327,20 @@ const PayCartPage = () => {
     }
   };
 
+  const handleSavePaymentCard = async (card: IPaymentCard) => {
+    if (card.id) {
+      await api.put(`${routePaymentCard}/${card.id}`, card);
+    } else {
+      await api.post(`${routePaymentCard}`, card);
+    }
+    setIsOpenModal(false);
+    const { data: fetch } = await api.get<IPaginatedResponse<any>>(
+      routePaymentCard
+    );
+    setCards(fetch.results);
+    window.location.reload();
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const { data } = await api.get<ICartDTO>("/cart/current_cart");
@@ -474,6 +492,24 @@ const PayCartPage = () => {
                 };
               })}
             />
+            <ButtonComponent onClick={() => setIsOpenModal(true)}>
+              Adicionar cartão
+            </ButtonComponent>
+            <Modal isOpen={isOpenModal} setIsOpen={setIsOpenModal}>
+              <ModalContent>
+                <Editor
+                  route={routePaymentCard}
+                  objectKeys={{
+                    first_four_digits: "Primeiros 4 digitos",
+                    last_four_digits: "Últimos 4 digitos",
+                    brand: "Bandeira",
+                    holder_name: "Titular do cartão",
+                    external_id: "ID externo",
+                  }}
+                  handleSave={handleSavePaymentCard}
+                />
+              </ModalContent>
+            </Modal>
           </div>
           <CouponSection>
             <h1>Cupons</h1>
