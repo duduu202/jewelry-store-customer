@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg fill="#00f6ff" height="60px" width="240px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	 viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
+	 <!-- ELuster -->
+	 <text transform="matrix(1 0 0 1 -100 64)" font-family="'HelveticaNeue-Bold'" font-size="80">
+		 <tspan fill="#009dff">E</tspan>
+	 </text>
+	 <text transform="matrix(1 0 0 1 -55 64)" font-family="'HelveticaNeue-Bold'" font-size="80">
+		 <tspan fill="#00f6ff">Luster</tspan>
+	 </text>
+</svg>
+
