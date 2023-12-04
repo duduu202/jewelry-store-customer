@@ -47,10 +47,10 @@ type CoupomFormValue = {
 const PayCartPage = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<ICartDTO>();
-  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [addresses, setAddresses] = useState<Address[]>();
   const [cards, setCards] = useState<any[]>();
 
-  const [selectedAddress, setSelectedAddress] = useState<Address | undefined>();
+  const [deliveryAddress, setdeliveryAddress] = useState<Address | undefined>();
   const [chargeAddress, setChargeAddress] = useState<Address | undefined>();
   const [selectedCards, setSelectedCards] = useState<any[]>([]);
   const [chargeAddressIsSame, setChargeAddressIsSame] = useState<boolean>(true);
@@ -69,12 +69,11 @@ const PayCartPage = () => {
   });
 
   const setAddressAndHighlight = (item: Address) => {
-    if (selectedAddress) {
-      console.log("selectedAddress", selectedAddress);
-      Object.assign(selectedAddress, { highlight: false });
+    if (deliveryAddress) {
+      Object.assign(deliveryAddress, { highlight: false });
     }
     Object.assign(item, { highlight: true });
-    setSelectedAddress(item);
+    setdeliveryAddress(item);
     return item;
   };
 
@@ -168,8 +167,9 @@ const PayCartPage = () => {
         };
       }),
     });
-
-    window.location.reload();
+    const currentRefetch = await api.get<ICartDTO>("/cart/current_cart");
+    setData(currentRefetch.data);
+    // window.location.reload();
   };
   const handleAddItem = async (id: string) => {
     const currentCart = await api.get<ICartDTO>("/cart/current_cart");
@@ -200,7 +200,9 @@ const PayCartPage = () => {
       }),
     });
 
-    window.location.reload();
+    const currentRefetch = await api.get<ICartDTO>("/cart/current_cart");
+    setData(currentRefetch.data);
+    // window.location.reload();
   };
 
   const handleRemoveOneItem = async (id: string) => {
@@ -232,7 +234,9 @@ const PayCartPage = () => {
       }),
     });
 
-    window.location.reload();
+    const currentRefetch = await api.get<ICartDTO>("/cart/current_cart");
+    setData(currentRefetch.data);
+    // window.location.reload();
   };
 
   const handleAddCoupom = couponHandleSubmit(async (value: CoupomFormValue) => {
@@ -275,13 +279,18 @@ const PayCartPage = () => {
 
   const delivery_fee = data?.delivery_fee || 0;
 
-  const products_price = data?.products_price || 0;
+  const [products_price, setProducts_price] = useState<number>(0);
 
   const PayCart = async () => {
     try {
-      console.log("selectedAddress", selectedAddress, !selectedCards);
-      if (!selectedAddress) {
-        throw new Error("Selecione um endereço");
+      console.log("deliveryAddress", deliveryAddress, !!deliveryAddress);
+      console.log("chargeAddress", chargeAddress, !!chargeAddress);
+      console.log("chargeAddressIsSame", chargeAddressIsSame);
+      if (!deliveryAddress) {
+        throw new Error("Selecione um endereço de entrega");
+      }
+      if (!chargeAddressIsSame && !chargeAddress) {
+        throw new Error("Selecione um endereço de cobrança");
       }
       const currentCart = await api.get<any>("/cart/current_cart");
       const payment_cards = selectedCards?.map((item) => {
@@ -292,7 +301,10 @@ const PayCartPage = () => {
       });
 
       const postObject = {
-        address_id: selectedAddress.id,
+        delivery_address_id: deliveryAddress.id,
+        charge_address_id: chargeAddressIsSame
+          ? deliveryAddress.id
+          : chargeAddress!.id,
         payment_cards,
         coupon_codes: coupons.map((o) => o.id),
       };
@@ -314,9 +326,9 @@ const PayCartPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       const { data } = await api.get<ICartDTO>("/cart/current_cart");
-      console.log("data", data);
+      console.log(data);
+      setProducts_price(data.products_price);
       setData(data);
-      setLoading(false);
     };
     fetchData();
   }, []);
@@ -370,6 +382,7 @@ const PayCartPage = () => {
               ]}
               disableActions={false}
               objectKeys={{
+                name: "Nome",
                 street: "Rua",
                 number: "Número",
                 district: "Bairro",
@@ -378,9 +391,6 @@ const PayCartPage = () => {
                 zip_code: "CEP",
               }}
             />
-            {/* 
-              Ratio: O endereço de entrega é o mesmo do endereço de cobrança?
-            */}
             <div>
               <input
                 type="checkbox"
@@ -388,7 +398,7 @@ const PayCartPage = () => {
                 onChange={() => {
                   setChargeAddressIsSame(!chargeAddressIsSame);
                   if (chargeAddressIsSame) {
-                    setChargeAddress(selectedAddress);
+                    setChargeAddress(deliveryAddress);
                   } else {
                     setChargeAddress(undefined);
                   }

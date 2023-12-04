@@ -32,7 +32,7 @@ interface IProps {
     [key: string]: string;
   };
 
-  actions: {
+  actions?: {
     name: string;
     onClick: (obj: any) => void;
   }[];
@@ -63,7 +63,6 @@ const ListEditor = ({ actions = [], ...props }: IProps) => {
         return;
       }
       const { data } = await api.get<IPaginatedResponse<any>>(route);
-      console.log("data", data.results);
       setData(data.results);
       setLoading(false);
       setIsOpenModal(false);

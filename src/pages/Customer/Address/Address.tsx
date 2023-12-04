@@ -93,6 +93,7 @@ const AddressListPage = () => {
         <ListEditor
           route={route}
           objectKeys={{
+            name: "Nome",
             street: "Rua",
             number: "Número",
             district: "Bairro",

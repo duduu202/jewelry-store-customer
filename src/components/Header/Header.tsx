@@ -8,6 +8,7 @@ import {
   RightSide,
 } from "./styles";
 import logo from "../../assets/logo.svg";
+import ELuster from "../../assets/ELuster.svg";
 import headerOptions from "./Header.options";
 import { useAuth } from "../../hooks/useAuth";
 import userImg from "../../assets/user.png";
@@ -21,7 +22,10 @@ const Header = () => {
 
   return (
     <Container>
-      <Logo src={logo} alt="logotipo fale mais voip" />
+      <div>
+        <Logo src={logo} alt="logotipo" />
+        <Logo src={ELuster} alt="logotipo ELuster" />
+      </div>
       <RightSide>
         <Navbar>
           <NavList>
