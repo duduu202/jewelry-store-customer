@@ -18,6 +18,8 @@ import CuponsListPage from "../pages/Customer/Cupons/Cupons";
 import PayCartPage from "../pages/Customer/PayCart/PayCart";
 import CartsListPage from "../pages/Customer/CartRequests/CartsList";
 import ExchangeItemsCartPage from "../pages/Customer/CartRequests/ExchangeItemsCart";
+import SignUpPage from "../pages/Customer/Profile/SignUp";
+import ProfilePage from "../pages/Customer/Profile/Profile";
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -50,6 +52,8 @@ const AppRoutes = () => {
           <Route path="/coupon" element={<CuponsListPage />} />
           <Route path="/coupon" element={<CuponsListPage />} />
           <Route path="/cart/pay" element={<PayCartPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
           {/* <Route path="/users/edit/:id" element={<UserEditPage />} /> */}
           {/* <Route path="/users/create" element={<UserCreatePage />} /> */}
         </Route>

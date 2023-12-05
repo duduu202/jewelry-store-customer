@@ -14,7 +14,9 @@ const HeaderProfile = () => {
     <Wrapper>
       <UserImg src={userImg} />
       <Column>
-        <UserName>{user?.user?.name || "Teste"}</UserName>
+        <UserName onClick={() => navigate("/profile")}>
+          {user?.user?.name || "Teste"}
+        </UserName>
         <LogoutButton type="button" onClick={onLogout}>
           Deslogar
         </LogoutButton>

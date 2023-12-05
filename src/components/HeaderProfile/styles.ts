@@ -17,6 +17,10 @@ export const Column = styled.div`
 export const UserName = styled.span`
   color: ${({ theme }) => theme.colors.white};
   font-size: 1rem;
+  cursor: pointer;
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+  }
 `;
 export const LogoutButton = styled.button`
   border: none;
