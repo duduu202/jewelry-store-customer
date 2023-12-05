@@ -357,7 +357,7 @@ const PayCartPage = () => {
           <div>
             <PageTitle>Carrinho</PageTitle>
             <GenericList
-              column_names={["name", "preço", "quantidade", "ações"]}
+              column_names={["nome", "preço", "quantidade", "ações"]}
               data={data?.cart_items?.map((item) => {
                 return {
                   id: item.id,
@@ -400,12 +400,12 @@ const PayCartPage = () => {
               ]}
               disableActions={false}
               objectKeys={{
-                name: "Nome",
-                street: "Rua",
-                number: "Número",
-                district: "Bairro",
-                city: "Cidade",
-                state: "Estado",
+                name: "nome",
+                street: "rua",
+                number: "número",
+                district: "bairro",
+                city: "cidade",
+                state: "estado",
                 zip_code: "CEP",
               }}
             />
@@ -440,11 +440,11 @@ const PayCartPage = () => {
                   ]}
                   disableActions={false}
                   objectKeys={{
-                    street: "Rua",
-                    number: "Número",
-                    district: "Bairro",
-                    city: "Cidade",
-                    state: "Estado",
+                    street: "rua",
+                    number: "número",
+                    district: "bairro",
+                    city: "cidade",
+                    state: "estado",
                     zip_code: "CEP",
                   }}
                 />
@@ -455,13 +455,13 @@ const PayCartPage = () => {
             <PageTitle>Selecione os Cartões</PageTitle>
             <GenericList
               column_names={[
-                "Primeiros 4 digitos",
-                "Últimos 4 digitos",
-                "Bandeira",
-                "Titular do cartão",
-                "Ações",
-                "Porcentagem",
-                "Valor a ser pago",
+                "primeiros 4 digitos",
+                "últimos 4 digitos",
+                "bandeira",
+                "titular do cartão",
+                "ações",
+                "porcentagem",
+                "valor a ser pago",
               ]}
               data={cards?.map((item) => {
                 return {
@@ -500,10 +500,10 @@ const PayCartPage = () => {
                 <Editor
                   route={routePaymentCard}
                   objectKeys={{
-                    first_four_digits: "Primeiros 4 digitos",
-                    last_four_digits: "Últimos 4 digitos",
-                    brand: "Bandeira",
-                    holder_name: "Titular do cartão",
+                    first_four_digits: "primeiros 4 digitos",
+                    last_four_digits: "últimos 4 digitos",
+                    brand: "bandeira",
+                    holder_name: "titular do cartão",
                     external_id: "ID externo",
                   }}
                   handleSave={handleSavePaymentCard}

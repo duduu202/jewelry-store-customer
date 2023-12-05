@@ -128,7 +128,7 @@ const CartPage = () => {
               })}
             /> */}
           <GenericList
-            column_names={["name", "price", "quantity", "ações"]}
+            column_names={["nome", "preço", "quantidade", "ações"]}
             data={cart?.cart_items?.map((item) => {
               return {
                 id: item.id,

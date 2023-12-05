@@ -109,7 +109,7 @@ const ProductsListPage = () => {
                     </ButtonComponent>
                   </div>
                   <div>
-                    <h4 style={{ color: theme.colors.primary_dark }}>
+                    <h4 style={{ color: theme.colors.primary }}>
                       Preço: {formatCurrency(product.price)}
                     </h4>
                     <p>Estoque: {product.stock_available}</p>

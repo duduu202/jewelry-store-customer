@@ -19,7 +19,7 @@ export const GenericSelectedCell = styled.td`
   border: 1px solid #ddd;
   border-radius: 5px;
   padding: 8px;
-  background-color: ${(props) => props.theme.colors.primary};
+  background-color: ${(props) => props.theme.colors.primary_dark};
 `;
 
 export const GenericListHeaderCell = styled.th`
